@@ -5,6 +5,8 @@ let btn_ClearAnnotation = document.getElementById("btn_ClearAnnotation");
 
 
 
+
+
 chrome.storage.sync.get("control_status", ({ control_status }) => {
     btn_ControlAnnotation.classList = [];
     btn_ControlAnnotation.classList.add(control_status);
@@ -91,4 +93,6 @@ function removeMarkup() {
         document.body.removeChild(annotations[i]);
     }
 }
+
+
 

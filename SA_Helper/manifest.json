@@ -23,7 +23,7 @@
       "matches": ["<all_urls>"],
       "js": [
         "element-inspector.js", 
-        "ei.js"
+        "content.js"
       ]
     }],
     "action": {
@@ -41,6 +41,15 @@
       "48": "/images/get_started48.png",
       "128": "/images/get_started128.png"
     },
-    "options_page": "options.html"
+    "options_page": "options.html",
+    "commands": {
+      "take_screenshot": {
+        "suggested_key": {
+          "default": "Alt+Shift+S",
+          "mac": "Alt+Shift+S"
+        },
+        "description": "Take a screenshot of current tab."
+      }
+    }
     
 }

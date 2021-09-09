@@ -13,3 +13,11 @@ chrome.runtime.onInstalled.addListener(() => {
 //         files: ['element-inspector.js']
 //     });
 // });
+
+// chrome.commands.onCommand.addListener((command) => {
+//     console.log(`Command "${command}" triggered`);
+
+//     chrome.runtime.sendMessage({
+//         msg: command
+//     });
+// });
