@@ -3,8 +3,6 @@ let btn_ControlAnnotation = document.getElementById("btn_ControlAnnotation");
 let btn_ControlAnnotation_i = document.querySelector("#btn_ControlAnnotation i");
 let btn_ClearAnnotation = document.getElementById("btn_ClearAnnotation");
 
-var captured;
-var ei;
 
 
 chrome.storage.sync.get("control_status", ({ control_status }) => {
@@ -13,6 +11,8 @@ chrome.storage.sync.get("control_status", ({ control_status }) => {
 
     btn_ControlAnnotation_i.classList = ["fas"];
     btn_ControlAnnotation_i.classList.add("fa-" + control_status);
+
+    
 });
 
 
@@ -39,6 +39,7 @@ btn_Screenshot.addEventListener("click", async () => {
 
 btn_ControlAnnotation.addEventListener("click", async () => {
     // alert(btn_ControlAnnotation.classList);
+    // alert("clicked on control_btn");  
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
     chrome.storage.sync.get("control_status", ({ control_status }) => {
@@ -46,17 +47,20 @@ btn_ControlAnnotation.addEventListener("click", async () => {
         if (control_status == 'play') {
             chrome.storage.sync.set({ control_status: 'pause' });
             cs = 'pause';
-            chrome.scripting.executeScript({
-                target: {tabId: tab.id},
-                function: startMarkup,
-            });
+            
+            chrome.tabs.sendMessage(tab.id, { msg: "Start EI" });
+            // chrome.scripting.executeScript({
+            //     target: {tabId: tab.id},
+            //     function: startMarkup,
+            // });
         } else {
             chrome.storage.sync.set({ control_status: 'play' });
             cs = 'play';
-            chrome.scripting.executeScript({
-                target: {tabId: tab.id},
-                function: endMarkup,
-            });
+            chrome.tabs.sendMessage(tab.id, { msg: "End EI" });
+            // chrome.scripting.executeScript({
+            //     target: {tabId: tab.id},
+            //     function: endMarkup,
+            // });
         }
 
         btn_ControlAnnotation.classList = [];
@@ -68,39 +72,7 @@ btn_ControlAnnotation.addEventListener("click", async () => {
 
 });
 
-function startMarkup() {
-    console.log("startMarkup");
-    el = new ElementInspector({
-        targetSelector: 'body',
-        onMousemove: function (e) {
-            console.log("startMarkup onMousemove");
-            captured = el.overlay;
-            console.log(e.target.outerHTML);
-        },
-        onClick: function () {
-            console.log("startMarkup onClick");
-            // console.log(el.overlay);
-            var markup = captured.cloneNode(true);
-            // var div = document.createElement('div');
-            // div.innerHTML = captured.trim();
-            // var markup = div.firstChild;
-            markup.style.backgroundColor = 'rgba(255,255,0,0.3)';
-            markup.classList.add("SA_markup");
-            markup.style.position = 'absolute';
-            document.body.appendChild(markup);
-            el.clicked = false;
-        }
-    })
-}
 
-function endMarkup() {
-    console.log("endMarkup");
-    el.overlay.style.display = 'none';
-    // el.overlay = null;
-    el.clicked = true;
-    Object.freeze(el.clicked)
-    el.onMousemove = ()=>{console.log("endMarkup onMousemove");};
-}
 
 btn_ClearAnnotation.addEventListener("click", async () => {
     // alert("clicked on clear_btn");
@@ -119,3 +91,4 @@ function removeMarkup() {
         document.body.removeChild(annotations[i]);
     }
 }
+

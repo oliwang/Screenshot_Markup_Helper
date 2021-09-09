@@ -13,11 +13,19 @@
       "unlimitedStorage",
       "browsingData",
       "notifications",
+      "declarativeContent",
       "scripting"
     ],
     "host_permissions": [
       "<all_urls>"
     ],
+    "content_scripts": [{
+      "matches": ["<all_urls>"],
+      "js": [
+        "element-inspector.js", 
+        "ei.js"
+      ]
+    }],
     "action": {
         "default_popup": "popup.html",
         "default_icon": {
@@ -33,9 +41,6 @@
       "48": "/images/get_started48.png",
       "128": "/images/get_started128.png"
     },
-    "options_page": "options.html",
-    "content_scripts": [{
-      "matches": ["<all_urls>"],
-      "js": ["element-inspector.js"]
-    }]
+    "options_page": "options.html"
+    
 }
