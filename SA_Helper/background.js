@@ -7,6 +7,8 @@ chrome.runtime.onInstalled.addListener(() => {
 
 });
 
+
+
 // chrome.action.onClicked.addListener((tab) => {
 //     chrome.scripting.executeScript({
 //         target: { tabId: tab.id },
@@ -14,10 +16,10 @@ chrome.runtime.onInstalled.addListener(() => {
 //     });
 // });
 
-// chrome.commands.onCommand.addListener((command) => {
-//     console.log(`Command "${command}" triggered`);
+chrome.commands.onCommand.addListener((command) => {
+    console.log(`Command "${command}" triggered`);
 
-//     chrome.runtime.sendMessage({
-//         msg: command
-//     });
-// });
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+        chrome.tabs.sendMessage(tabs[0].id, {action: command}, function(response) {});  
+    });
+});

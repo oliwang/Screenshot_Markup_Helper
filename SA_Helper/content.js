@@ -27,7 +27,7 @@ ElementInspector.prototype._init = function(){
 
 
 ElementInspector.prototype._startInspecting = function(){
-    alert("new startInspecting");
+    // alert("new startInspecting");
     var that = this;
     that.showOverlay();
 
@@ -36,7 +36,7 @@ ElementInspector.prototype._startInspecting = function(){
 }
 
 ElementInspector.prototype._stopInspecting = function(){
-    alert("new stopInspecting");
+    // alert("new stopInspecting");
     var that = this;
     that.hideOverlay();
 
@@ -97,15 +97,13 @@ var ei = new ElementInspector({
     targetSelector: 'body',
     onMousemove: function (e) {
         console.log("startMarkup onMousemove");
-        if (btn_status == "pause") {
-            captured = ei.overlay;
-        }
+        captured = ei.overlay;
         // console.log(e.target.outerHTML);
     },
     onClick: function (e) {
-        console.log(e);
-        console.log(captured);
-        console.log("startMarkup onClick", btn_status);
+        // console.log(e);
+        // console.log(captured);
+        // console.log("startMarkup onClick", btn_status);
         var markup = captured.cloneNode(true);
         markup.style.backgroundColor = 'rgba(255,255,0,0.3)';
         markup.classList.add("SA_markup");
@@ -130,14 +128,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 function startMarkup() {
-    console.log("startMarkup");
+    // console.log("startMarkup");
  
     ei._startInspecting();
 }
 
 function endMarkup() {
-    console.log("endMarkup");
+    // console.log("endMarkup");
     ei._stopInspecting();
 
 }
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    console.log(message)
+    var action = message.action;
+
+    if (action === 'take_screenshot') {
+        console.log("take_screenshot");
+    }
+
+    return true
+});
 
