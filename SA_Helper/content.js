@@ -126,6 +126,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         } else if (request.msg === 'remove_markup') {
             console.log("remove_markup", "content.js");
             clearMarkup();
+        } else if (request.msg === 'markup') {
+            if (btn_status === "pause") {
+                btn_status = "play";
+                endMarkup();
+            } else {
+                btn_status = "pause";
+                startMarkup();
+            }
         }
 
     }

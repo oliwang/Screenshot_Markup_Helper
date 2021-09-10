@@ -57,6 +57,13 @@
           "mac": "Alt+Shift+C"
         },
         "description": "Clear all markup on page."
+      },
+      "markup": {
+        "suggested_key": {
+          "default": "Alt+Shift+M",
+          "mac": "Alt+Shift+M"
+        },
+        "description": "Start inspecting and adding markup."
       }
       
     }
