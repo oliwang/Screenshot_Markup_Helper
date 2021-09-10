@@ -50,7 +50,15 @@
           "mac": "Alt+Shift+S"
         },
         "description": "Take a screenshot of current tab."
+      },
+      "remove_markup": {
+        "suggested_key": {
+          "default": "Alt+Shift+C",
+          "mac": "Alt+Shift+C"
+        },
+        "description": "Clear all markup on page."
       }
+      
     }
     
 }

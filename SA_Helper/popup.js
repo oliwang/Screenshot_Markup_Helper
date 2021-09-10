@@ -83,20 +83,10 @@ btn_ControlAnnotation.addEventListener("click", async () => {
 btn_ClearAnnotation.addEventListener("click", async () => {
     // alert("clicked on clear_btn");
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    chrome.tabs.sendMessage(tab.id, { msg: "remove_markup" });
 
-    chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        function: removeMarkup,
-    });
 });
 
-function removeMarkup() {
-    console.log("removeMarkup");
-    var annotations = document.querySelectorAll(".SA_markup");
-    for (var i = 0; i < annotations.length; i++) {
-        document.body.removeChild(annotations[i]);
-    }
-}
 
 
 

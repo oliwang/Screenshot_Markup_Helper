@@ -123,6 +123,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         } else if (request.msg === 'End EI') {
             btn_status = "play";
             endMarkup();
+        } else if (request.msg === 'remove_markup') {
+            console.log("remove_markup", "content.js");
+            clearMarkup();
         }
 
     }
@@ -143,6 +146,9 @@ function endMarkup() {
 }
 
 function clearMarkup() {
-
+    var annotations = document.querySelectorAll(".SA_markup");
+    for (var i = 0; i < annotations.length; i++) {
+        document.body.removeChild(annotations[i]);
+    }
 }
 
