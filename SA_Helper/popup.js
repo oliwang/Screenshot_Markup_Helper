@@ -17,12 +17,8 @@ chrome.storage.sync.get("control_status", ({ control_status }) => {
     
 });
 
-
-btn_Screenshot.addEventListener("click", async () => {
-    console.log("clicked on screenshot_btn");
-    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-    chrome.tabs.captureVisibleTab(tab.windowId, {}, (dataUrl) => {
+function takeScreenshot(windowId) {
+    chrome.tabs.captureVisibleTab(windowId, {}, (dataUrl) => {
         console.log("taken");
         // alert(tab.url);
         var filename = new Date().toISOString()
@@ -36,6 +32,14 @@ btn_Screenshot.addEventListener("click", async () => {
         // var url = dataUrl.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
         // window.open(url);
     });
+}
+
+
+btn_Screenshot.addEventListener("click", async () => {
+    console.log("clicked on screenshot_btn");
+    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    takeScreenshot(tab.windowId);
+    
 
 });
 
@@ -93,6 +97,8 @@ function removeMarkup() {
         document.body.removeChild(annotations[i]);
     }
 }
+
+
 
 
 

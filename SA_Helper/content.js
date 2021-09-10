@@ -114,6 +114,7 @@ var ei = new ElementInspector({
 
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log(request);
     if(request) {
 
         if(request.msg === 'Start EI') {
@@ -125,6 +126,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
 
     }
+
+    return true;
 });
 
 function startMarkup() {
@@ -139,14 +142,7 @@ function endMarkup() {
 
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message)
-    var action = message.action;
+function clearMarkup() {
 
-    if (action === 'take_screenshot') {
-        console.log("take_screenshot");
-    }
-
-    return true
-});
+}
 
