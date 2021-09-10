@@ -5,25 +5,23 @@ let btn_ClearAnnotation = document.getElementById("btn_ClearAnnotation");
 
 
 
-
-
-chrome.storage.sync.get("control_status", ({ control_status }) => {
+function setControlBtnStatus(control_status) {
     btn_ControlAnnotation.classList = [];
     btn_ControlAnnotation.classList.add(control_status);
 
     btn_ControlAnnotation_i.classList = ["fas"];
     btn_ControlAnnotation_i.classList.add("fa-" + control_status);
+}
 
-    
+chrome.storage.sync.get("control_status", ({ control_status }) => {
+    setControlBtnStatus(control_status);
 });
 
 function takeScreenshot(windowId) {
-    chrome.tabs.captureVisibleTab(windowId, {}, (dataUrl) => {
+    chrome.tabs.captureVisibleTab(windowId, {format: "png"}, (dataUrl) => {
         console.log("taken");
-        // alert(tab.url);
         var filename = new Date().toISOString()
         filename = filename.replace(/[-:.TZ]/g, '');
-        // alert(filename);
         var anchor = document.createElement("a");
         anchor.href = dataUrl;
         anchor.download = filename + "_" + "screenshot.png";
@@ -44,36 +42,12 @@ btn_Screenshot.addEventListener("click", async () => {
 });
 
 btn_ControlAnnotation.addEventListener("click", async () => {
-    // alert(btn_ControlAnnotation.classList);
-    // alert("clicked on control_btn");  
+
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
-    chrome.storage.sync.get("control_status", ({ control_status }) => {
-        let cs = control_status;
-        if (control_status == 'play') {
-            chrome.storage.sync.set({ control_status: 'pause' });
-            cs = 'pause';
-            
-            chrome.tabs.sendMessage(tab.id, { msg: "Start EI" });
-            // chrome.scripting.executeScript({
-            //     target: {tabId: tab.id},
-            //     function: startMarkup,
-            // });
-        } else {
-            chrome.storage.sync.set({ control_status: 'play' });
-            cs = 'play';
-            chrome.tabs.sendMessage(tab.id, { msg: "End EI" });
-            // chrome.scripting.executeScript({
-            //     target: {tabId: tab.id},
-            //     function: endMarkup,
-            // });
-        }
-
-        btn_ControlAnnotation.classList = [];
-        btn_ControlAnnotation.classList.add(cs);
-
-        btn_ControlAnnotation_i.classList = ["fas"];
-        btn_ControlAnnotation_i.classList.add("fa-" + cs);
+    chrome.tabs.sendMessage(tab.id, { msg: 'markup', data: {sender : "popup"} }, function(response){
+        console.log(response);
+        setControlBtnStatus(response.cs);
     });
 
 });
@@ -86,6 +60,14 @@ btn_ClearAnnotation.addEventListener("click", async () => {
     chrome.tabs.sendMessage(tab.id, { msg: "remove_markup" });
 
 });
+
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+      if (request.msg === "control_status") {
+        setControlBtnStatus(response.data.cs);
+      }
+    }
+  );
 
 
 

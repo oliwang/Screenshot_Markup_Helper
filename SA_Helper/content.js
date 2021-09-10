@@ -4,6 +4,7 @@ var is_init = true;
 
 
 
+
 // debugger;
 
 // https://stackoverflow.com/questions/31404776/add-and-remove-eventlistener-with-arguments-and-access-element-and-event-java
@@ -101,9 +102,6 @@ var ei = new ElementInspector({
         // console.log(e.target.outerHTML);
     },
     onClick: function (e) {
-        // console.log(e);
-        // console.log(captured);
-        // console.log("startMarkup onClick", btn_status);
         var markup = captured.cloneNode(true);
         markup.style.backgroundColor = 'rgba(255,255,0,0.3)';
         markup.classList.add("SA_markup");
@@ -114,27 +112,31 @@ var ei = new ElementInspector({
 
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log(request);
     if(request) {
 
-        if(request.msg === 'Start EI') {
-            btn_status = "pause";
-            startMarkup();
-        } else if (request.msg === 'End EI') {
-            btn_status = "play";
-            endMarkup();
-        } else if (request.msg === 'remove_markup') {
-            console.log("remove_markup", "content.js");
+        if (request.msg === 'remove_markup') {
             clearMarkup();
         } else if (request.msg === 'markup') {
-            if (btn_status === "pause") {
-                btn_status = "play";
-                endMarkup();
-            } else {
-                btn_status = "pause";
-                startMarkup();
-            }
-        }
+            chrome.storage.sync.get("control_status", ({control_status}) => {
+                if(control_status === "pause") {
+                    chrome.storage.sync.set({ control_status: 'play' })
+                    cs = 'play';
+                    endMarkup();
+                } else if (control_status === "play") {
+                    chrome.storage.sync.set({ control_status: 'pause' });
+                    cs = 'pause';
+                    startMarkup();
+                }
+
+                if (request.data.sender == "popup") {
+                    sendResponse({cs: cs});
+                } else if (request.data.sender == "background") {
+                    // content.js to popup.js send message
+                    chrome.runtime.sendMessage({msg: "control_status", data: {cs: cs}});
+                }
+            });
+
+        } 
 
     }
 
@@ -143,7 +145,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 function startMarkup() {
     // console.log("startMarkup");
- 
     ei._startInspecting();
 }
 
