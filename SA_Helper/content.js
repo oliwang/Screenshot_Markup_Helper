@@ -50,6 +50,7 @@ ElementInspector.prototype._stopInspecting = function(){
 function mousemoveEventContent(that) {
     var e = event;
     if (that.clicked) {
+        that.clicked = !that.clicked;
         return;
     }
 
@@ -106,6 +107,7 @@ var ei = new ElementInspector({
         markup.style.backgroundColor = 'rgba(255,255,0,0.3)';
         markup.classList.add("SA_markup");
         markup.style.position = 'absolute';
+
         document.body.appendChild(markup);
     }
 });
