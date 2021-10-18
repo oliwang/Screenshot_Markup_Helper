@@ -2,8 +2,51 @@ let btn_Screenshot = document.getElementById("btn_Screenshot");
 let btn_ControlAnnotation = document.getElementById("btn_ControlAnnotation");
 let btn_ControlAnnotation_i = document.querySelector("#btn_ControlAnnotation i");
 let btn_ClearAnnotation = document.getElementById("btn_ClearAnnotation");
+let btn_DownloadDocx = document.getElementById("btn_DownloadDocx");
+let div_steps_wrapper = document.getElementById("steps_wrapper");
 
 
+(function() {
+    // alert("init");
+    chrome.storage.sync.get("control_status", ({ control_status }) => {
+        setControlBtnStatus(control_status);
+    });
+
+    chrome.storage.local.get('imgs', function(imgs) {
+        console.log("open popup");
+        console.log(imgs);
+        var imgs_arr = imgs.imgs;
+        for (var i = 0; i < imgs_arr.length; i++) {
+            var new_img = document.createElement("img");
+            new_img.src = imgs_arr[i];
+            new_img.style.width = "100%";
+            var filename = new Date().toISOString()
+            filename = filename.replace(/[-:.TZ]/g, '');
+            new_img.id = "img_" + filename;
+            new_img.style.padding = "10px 0";
+            new_img.style.border = "1px solid #ccc";
+            // console.log(new_img);
+            div_steps_wrapper.appendChild(new_img);
+            new_img.addEventListener("click", function(e) {
+                console.log(e.target);
+                console.log(e.target.src);
+                var ele_id = e.target.id;
+                var ele_src = e.target.src;
+                div_steps_wrapper.removeChild(document.getElementById(ele_id));
+                chrome.storage.local.get('imgs', function(imgs) {
+                    var imgs_arr = imgs.imgs;
+                    var index_of_ele = imgs_arr.indexOf(ele_src);
+                    if (index_of_ele > -1) {
+                        imgs_arr.splice(index_of_ele, 1);
+                    }
+                    chrome.storage.local.set({"imgs": imgs_arr});
+                })
+            });
+        }
+
+    });
+ 
+ })();
 
 function setControlBtnStatus(control_status) {
     btn_ControlAnnotation.classList = [];
@@ -13,19 +56,27 @@ function setControlBtnStatus(control_status) {
     btn_ControlAnnotation_i.classList.add("fa-" + control_status);
 }
 
-chrome.storage.sync.get("control_status", ({ control_status }) => {
-    setControlBtnStatus(control_status);
-});
+
 
 function takeScreenshot(windowId) {
+    // alert("takeScreenshot")
     chrome.tabs.captureVisibleTab(windowId, {format: "png"}, (dataUrl) => {
-        console.log("taken");
+        console.log(dataUrl);
         var filename = new Date().toISOString()
         filename = filename.replace(/[-:.TZ]/g, '');
         var anchor = document.createElement("a");
         anchor.href = dataUrl;
         anchor.download = filename + "_" + "screenshot.png";
         anchor.click();
+
+        chrome.storage.local.get('imgs', function(imgs) {
+            console.log(imgs.imgs);
+            var imgs_arr = imgs.imgs;
+            imgs_arr.push(dataUrl);
+            chrome.storage.local.set({"imgs": imgs_arr});
+        });
+
+        // window.close();
 
         // var url = dataUrl.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
         // window.open(url);
@@ -68,6 +119,19 @@ chrome.runtime.onMessage.addListener(
       }
     }
   );
+
+btn_DownloadDocx.addEventListener("click", async () => {
+    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    chrome.tabs.sendMessage(tab.id, { msg: "download_docx" });
+});
+
+btn_RemoveAllImages.addEventListener("click", async () => {
+    // let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    // chrome.tabs.sendMessage(tab.id, { msg: "remove_all_images" });
+    div_steps_wrapper.innerHTML = "";
+    var imgs = [];
+    chrome.storage.local.set({imgs});
+});
 
 
 

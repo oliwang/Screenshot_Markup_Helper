@@ -138,7 +138,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 }
             });
 
-        } 
+        }  else if (request.msg === 'download_docx'){
+            downloadDocx();
+        }
 
     }
 
@@ -161,5 +163,79 @@ function clearMarkup() {
     for (var i = 0; i < annotations.length; i++) {
         document.body.removeChild(annotations[i]);
     }
+}
+
+
+function downloadDocx() {
+    var paragraphs = [];
+    chrome.storage.local.get('imgs', function(imgs) {
+        console.log("open popup");
+        console.log(imgs);
+        var imgs_arr = imgs.imgs;
+        paragraphs = new Array(imgs_arr.length).fill(null);
+
+        var promise_arr = []
+        for (var i = 0; i < imgs_arr.length; i++) {
+            const p = new Promise((resolve, reject) => {
+                // setTimeout(resolve, 100, 'foo');
+                const img = new Image();
+                img.src = imgs_arr[i];
+                // alert(img);
+                // alert(img.naturalWidth);
+
+                var curr_paragraph = new docx.Paragraph({
+                    children: [
+                        new docx.TextRun((i+1).toString() + ". Step " + (i+1).toString() + "\n"),
+                        new docx.ImageRun({
+                            data: imgs_arr[i],
+                            transformation: {
+                                width: 600,
+                                height: 318,
+                            },
+                        }),
+                        new docx.TextRun({
+                            text: "",
+                            break: 2,
+                        })
+                    ]
+                });
+                paragraphs[i] = curr_paragraph;
+                resolve();
+
+                // img.onload() = function() {
+                //     alert("onload");
+                    
+                // }
+                
+
+            });
+
+            
+        }
+
+        Promise.all(promise_arr).then(() => {
+            const doc = new docx.Document({
+                sections: [
+                  {
+                    properties: {},
+                    children: paragraphs
+                  }
+                ]
+              });
+            
+              docx.Packer.toBlob(doc).then((blob) => {
+                console.log(blob);
+                var filename = new Date().toISOString()
+                filename = filename.replace(/[-:.TZ]/g, '');
+                saveAs(blob, "ReproSteps_" + filename + ".docx");
+                console.log("Document created successfully");
+              });
+
+        });
+
+        
+    });
+
+    
 }
 

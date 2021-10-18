@@ -6,3 +6,10 @@ button {
   border: none;
   border-radius: 2px;
 }
+
+.btn_wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}

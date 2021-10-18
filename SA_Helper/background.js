@@ -1,9 +1,11 @@
 // background.js
 
 let control_status = 'play';
+let imgs = [];
 
 chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.sync.set({ control_status });
+    chrome.storage.local.set({ imgs });
 
 });
 
