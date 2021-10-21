@@ -8,88 +8,125 @@ let div_steps_wrapper = document.getElementById("steps_wrapper");
 
 function add_image_to_wrapper(img_url) {
     var new_img = document.createElement("img");
-            new_img.src = img_url;
-            new_img.style.width = "100%";
-            var filename = new Date().toISOString()
-            filename = filename.replace(/[-:.TZ]/g, '');
-            new_img.id = "img_" + filename;
-            new_img.style.padding = "10px 0";
-            new_img.style.border = "1px solid #ccc";
-            // console.log(new_img);
-            div_steps_wrapper.appendChild(new_img);
-            new_img.addEventListener("click", function(e) {
-                // console.log(e.target);
-                // console.log(e.target.src);
-                var ele_id = e.target.id;
-                var ele_src = e.target.src;
-                div_steps_wrapper.removeChild(document.getElementById(ele_id));
-                chrome.storage.local.get('imgs', function(imgs) {
-                    var imgs_arr = imgs.imgs;
-                    // var index_of_ele = imgs_arr.indexOf(ele_src);
+    var new_input = document.createElement("input");
+    new_img.src = img_url;
+    new_img.style.width = "100%";
+    var filename = new Date().toISOString()
+    filename = filename.replace(/[-:.TZ]/g, '');
+    new_img.id = "img_" + filename;
+    new_img.style.margin = "5px 0 10px 0";
+    new_img.style.border = "1px solid #ccc";
+    // console.log(new_img);
+    new_input.style.width = "100%";
+    new_input.style.margin = "0px 0px";
+    new_input.style.padding = "0px 0px";
+    new_input.style.borderWidth = "1px";
+    new_input.id = "input_" + filename;
+    new_input.placeholder = "Enter step description text here:";
 
-                    for (var i = 0; i < imgs_arr.length; i++) {
-                        if (Object.keys(imgs_arr[i])[0] == ele_src) {
-                            imgs_arr.splice(i, 1);
-                            break;
-                        }
-                    }
+    div_steps_wrapper.appendChild(new_input);
+    div_steps_wrapper.appendChild(new_img);
 
-                    chrome.storage.local.set({"imgs": imgs_arr});
-                    // chrome.storage.local.remove([imgs_arr]);
-                })
-            });
+    chrome.storage.local.get('imgs', function (imgs) {
+        var imgs_arr = imgs.imgs;
 
-            new_img.addEventListener("load", function(e){
-                // console.log(e.target.naturalWidth);
-                // console.log(e.target.naturalHeight);
-                // console.log(e.target.src)
-                var src = e.target.src;
-                var nWidth = e.target.naturalWidth;
-                var nHeight = e.target.naturalHeight;
+        for (var i = 0; i < imgs_arr.length; i++) {
+            if (Object.keys(imgs_arr[i])[0] == img_url) {
+                new_input.value = imgs_arr[i][img_url]["text"];
+                break;
+            }
+        }
 
-                chrome.storage.local.get('imgs', function(imgs) {
-                    var imgs_arr = imgs.imgs;
-                    // var index_of_ele = imgs_arr.indexOf(ele_src);
+        chrome.storage.local.set({ "imgs": imgs_arr });
+    })
 
-                    for (var i = 0; i < imgs_arr.length; i++) {
-                        if (Object.keys(imgs_arr[i])[0] == src) {
-                            imgs_arr[i][src] = {"w": nWidth, "h": nHeight};
-                            break;
-                        }
-                    }
+    new_img.addEventListener("click", function (e) {
+        // console.log(e.target);
+        // console.log(e.target.src);
+        var ele_id = e.target.id;
+        var ele_input_id = e.target.id.replace("img_", "input_");
+        var ele_src = e.target.src;
+        div_steps_wrapper.removeChild(document.getElementById(ele_id));
+        div_steps_wrapper.removeChild(document.getElementById(ele_input_id));
+        chrome.storage.local.get('imgs', function (imgs) {
+            var imgs_arr = imgs.imgs;
 
-                    chrome.storage.local.set({"imgs": imgs_arr});
-                    // chrome.storage.local.remove([imgs_arr]);
-                })
+            for (var i = 0; i < imgs_arr.length; i++) {
+                if (Object.keys(imgs_arr[i])[0] == ele_src) {
+                    imgs_arr.splice(i, 1);
+                    break;
+                }
+            }
 
-                
-                
-            }) 
+            chrome.storage.local.set({ "imgs": imgs_arr });
+        })
+    });
+
+    new_img.addEventListener("load", function (e) {
+
+        var src = e.target.src;
+        var nWidth = e.target.naturalWidth;
+        var nHeight = e.target.naturalHeight;
+
+        chrome.storage.local.get('imgs', function (imgs) {
+            var imgs_arr = imgs.imgs;
+
+            for (var i = 0; i < imgs_arr.length; i++) {
+                if (Object.keys(imgs_arr[i])[0] == src) {
+                    imgs_arr[i][src]["w"] = nWidth;
+                    imgs_arr[i][src]["h"] = nHeight;
+                    break;
+                }
+            }
+
+            chrome.storage.local.set({ "imgs": imgs_arr });
+        })
+
+    });
+
+    new_input.addEventListener("input", function (e) {
+        var text = new_input.value;
+
+        chrome.storage.local.get('imgs', function (imgs) {
+            var imgs_arr = imgs.imgs;
+
+            for (var i = 0; i < imgs_arr.length; i++) {
+                if (Object.keys(imgs_arr[i])[0] == img_url) {
+                    console.log("test found", imgs_arr[i][img_url]);
+                    imgs_arr[i][img_url]["text"] = text;
+                    break;
+                }
+            }
+            console.log(imgs_arr);
+
+            chrome.storage.local.set({ "imgs": imgs_arr });
+        })
+    });
 
 }
 
-(function() {
+(function () {
     // alert("init");
     chrome.storage.sync.get("control_status", ({ control_status }) => {
         setControlBtnStatus(control_status);
     });
 
-    chrome.storage.local.get('imgs', function(imgs) {
+    chrome.storage.local.get('imgs', function (imgs) {
         // console.log("open popup");
         // console.log(imgs);
         var imgs_arr = imgs.imgs;
         for (var i = 0; i < imgs_arr.length; i++) {
             var obj = imgs_arr[i];
-            Object.keys(obj).forEach(function(key) {
+            Object.keys(obj).forEach(function (key) {
                 // console.log(key);
                 add_image_to_wrapper(key);
             });
-            
+
         }
 
     });
- 
- })();
+
+})();
 
 function setControlBtnStatus(control_status) {
     btn_ControlAnnotation.classList = [];
@@ -103,7 +140,7 @@ function setControlBtnStatus(control_status) {
 
 function takeScreenshot(windowId) {
     // alert("takeScreenshot")
-    chrome.tabs.captureVisibleTab(windowId, {format: "png"}, (dataUrl) => {
+    chrome.tabs.captureVisibleTab(windowId, { format: "png" }, (dataUrl) => {
         // console.log(dataUrl);
         var filename = new Date().toISOString()
         filename = filename.replace(/[-:.TZ]/g, '');
@@ -112,14 +149,27 @@ function takeScreenshot(windowId) {
         anchor.download = filename + "_" + "screenshot.png";
         anchor.click();
 
-        chrome.storage.local.get('imgs', function(imgs) {
+        chrome.storage.local.get('imgs', function (imgs) {
             // console.log(imgs.imgs);
             var imgs_arr = imgs.imgs;
-            var obj = {};
-            obj[dataUrl] = 0;
-            imgs_arr.push(obj);
-            chrome.storage.local.set({"imgs": imgs_arr});
-            add_image_to_wrapper(dataUrl);
+            var is_dup = false;
+
+            for (var i = 0; i < imgs_arr.length; i++) {
+                if (Object.keys(imgs_arr[i])[0] == dataUrl) {
+                    is_dup = true;
+                    break;
+                }
+            }
+
+            if (!is_dup) {
+                var obj = {};
+                obj[dataUrl] = {"w": 0, "h": 0, "text": ""};
+                imgs_arr.push(obj);
+                chrome.storage.local.set({ "imgs": imgs_arr });
+                add_image_to_wrapper(dataUrl);
+            }
+
+            
         });
 
         // window.close();
@@ -134,15 +184,15 @@ btn_Screenshot.addEventListener("click", async () => {
     console.log("clicked on screenshot_btn");
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     takeScreenshot(tab.windowId);
-    
+
 
 });
 
 btn_ControlAnnotation.addEventListener("click", async () => {
 
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-    chrome.tabs.sendMessage(tab.id, { msg: 'markup', data: {sender : "popup"} }, function(response){
+
+    chrome.tabs.sendMessage(tab.id, { msg: 'markup', data: { sender: "popup" } }, function (response) {
         console.log(response);
         setControlBtnStatus(response.cs);
     });
@@ -159,12 +209,12 @@ btn_ClearAnnotation.addEventListener("click", async () => {
 });
 
 chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-      if (request.msg === "control_status") {
-        setControlBtnStatus(response.data.cs);
-      }
+    function (request, sender, sendResponse) {
+        if (request.msg === "control_status") {
+            setControlBtnStatus(response.data.cs);
+        }
     }
-  );
+);
 
 btn_DownloadDocx.addEventListener("click", async () => {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -176,7 +226,7 @@ btn_RemoveAllImages.addEventListener("click", async () => {
     // chrome.tabs.sendMessage(tab.id, { msg: "remove_all_images" });
     div_steps_wrapper.innerHTML = "";
     var imgs = [];
-    chrome.storage.local.set({imgs});
+    chrome.storage.local.set({ imgs });
 });
 
 

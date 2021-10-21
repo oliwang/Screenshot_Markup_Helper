@@ -178,13 +178,14 @@ function downloadDocx() {
             var img_src = Object.keys(imgs_arr[i])[0];
             var w = imgs_arr[i][img_src].w;
             var h = imgs_arr[i][img_src].h;
+            var text = imgs_arr[i][img_src].text;
 
             console.log(img_src, w, h);
 
             var p = new Promise((resolve, reject) => {
                 var curr_paragraph = new docx.Paragraph({
                     children: [
-                        new docx.TextRun((i + 1).toString() + ". Step " + (i + 1).toString() + "\n"),
+                        new docx.TextRun((i + 1).toString() + ". " + text + "\n"),
                         new docx.ImageRun({
                             data: img_src,
                             transformation: {

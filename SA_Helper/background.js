@@ -24,10 +24,22 @@ function takeScreenshot(windowId) {
         chrome.storage.local.get('imgs', function(imgs) {
             // console.log(imgs.imgs);
             var imgs_arr = imgs.imgs;
-            var obj = {};
-            obj[dataUrl] = 0;
-            imgs_arr.push(obj);
-            chrome.storage.local.set({"imgs": imgs_arr});
+            var is_dup = false;
+
+            for (var i = 0; i < imgs_arr.length; i++) {
+                if (Object.keys(imgs_arr[i])[0] == dataUrl) {
+                    is_dup = true;
+                    break;
+                }
+            }
+
+            if (!is_dup) {
+                var obj = {};
+                obj[dataUrl] = {"w": 0, "h": 0, "text": ""};
+                imgs_arr.push(obj);
+                chrome.storage.local.set({ "imgs": imgs_arr });
+                add_image_to_wrapper(dataUrl);
+            }
         });
 
     });
