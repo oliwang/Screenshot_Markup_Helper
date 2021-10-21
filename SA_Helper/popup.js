@@ -175,7 +175,7 @@ btn_RemoveAllImages.addEventListener("click", async () => {
     // let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     // chrome.tabs.sendMessage(tab.id, { msg: "remove_all_images" });
     div_steps_wrapper.innerHTML = "";
-    var imgs = {};
+    var imgs = [];
     chrome.storage.local.set({imgs});
 });
 
