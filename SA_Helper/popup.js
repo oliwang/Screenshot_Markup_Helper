@@ -6,19 +6,9 @@ let btn_DownloadDocx = document.getElementById("btn_DownloadDocx");
 let div_steps_wrapper = document.getElementById("steps_wrapper");
 
 
-(function() {
-    // alert("init");
-    chrome.storage.sync.get("control_status", ({ control_status }) => {
-        setControlBtnStatus(control_status);
-    });
-
-    chrome.storage.local.get('imgs', function(imgs) {
-        console.log("open popup");
-        console.log(imgs);
-        var imgs_arr = imgs.imgs;
-        for (var i = 0; i < imgs_arr.length; i++) {
-            var new_img = document.createElement("img");
-            new_img.src = imgs_arr[i];
+function add_image_to_wrapper(img_url) {
+    var new_img = document.createElement("img");
+            new_img.src = img_url;
             new_img.style.width = "100%";
             var filename = new Date().toISOString()
             filename = filename.replace(/[-:.TZ]/g, '');
@@ -28,20 +18,73 @@ let div_steps_wrapper = document.getElementById("steps_wrapper");
             // console.log(new_img);
             div_steps_wrapper.appendChild(new_img);
             new_img.addEventListener("click", function(e) {
-                console.log(e.target);
-                console.log(e.target.src);
+                // console.log(e.target);
+                // console.log(e.target.src);
                 var ele_id = e.target.id;
                 var ele_src = e.target.src;
                 div_steps_wrapper.removeChild(document.getElementById(ele_id));
                 chrome.storage.local.get('imgs', function(imgs) {
                     var imgs_arr = imgs.imgs;
-                    var index_of_ele = imgs_arr.indexOf(ele_src);
-                    if (index_of_ele > -1) {
-                        imgs_arr.splice(index_of_ele, 1);
+                    // var index_of_ele = imgs_arr.indexOf(ele_src);
+
+                    for (var i = 0; i < imgs_arr.length; i++) {
+                        if (Object.keys(imgs_arr[i])[0] == ele_src) {
+                            imgs_arr.splice(i, 1);
+                            break;
+                        }
                     }
+
                     chrome.storage.local.set({"imgs": imgs_arr});
+                    // chrome.storage.local.remove([imgs_arr]);
                 })
             });
+
+            new_img.addEventListener("load", function(e){
+                // console.log(e.target.naturalWidth);
+                // console.log(e.target.naturalHeight);
+                // console.log(e.target.src)
+                var src = e.target.src;
+                var nWidth = e.target.naturalWidth;
+                var nHeight = e.target.naturalHeight;
+
+                chrome.storage.local.get('imgs', function(imgs) {
+                    var imgs_arr = imgs.imgs;
+                    // var index_of_ele = imgs_arr.indexOf(ele_src);
+
+                    for (var i = 0; i < imgs_arr.length; i++) {
+                        if (Object.keys(imgs_arr[i])[0] == src) {
+                            imgs_arr[i][src] = {"w": nWidth, "h": nHeight};
+                            break;
+                        }
+                    }
+
+                    chrome.storage.local.set({"imgs": imgs_arr});
+                    // chrome.storage.local.remove([imgs_arr]);
+                })
+
+                
+                
+            }) 
+
+}
+
+(function() {
+    // alert("init");
+    chrome.storage.sync.get("control_status", ({ control_status }) => {
+        setControlBtnStatus(control_status);
+    });
+
+    chrome.storage.local.get('imgs', function(imgs) {
+        // console.log("open popup");
+        // console.log(imgs);
+        var imgs_arr = imgs.imgs;
+        for (var i = 0; i < imgs_arr.length; i++) {
+            var obj = imgs_arr[i];
+            Object.keys(obj).forEach(function(key) {
+                // console.log(key);
+                add_image_to_wrapper(key);
+            });
+            
         }
 
     });
@@ -61,7 +104,7 @@ function setControlBtnStatus(control_status) {
 function takeScreenshot(windowId) {
     // alert("takeScreenshot")
     chrome.tabs.captureVisibleTab(windowId, {format: "png"}, (dataUrl) => {
-        console.log(dataUrl);
+        // console.log(dataUrl);
         var filename = new Date().toISOString()
         filename = filename.replace(/[-:.TZ]/g, '');
         var anchor = document.createElement("a");
@@ -70,10 +113,13 @@ function takeScreenshot(windowId) {
         anchor.click();
 
         chrome.storage.local.get('imgs', function(imgs) {
-            console.log(imgs.imgs);
+            // console.log(imgs.imgs);
             var imgs_arr = imgs.imgs;
-            imgs_arr.push(dataUrl);
+            var obj = {};
+            obj[dataUrl] = 0;
+            imgs_arr.push(obj);
             chrome.storage.local.set({"imgs": imgs_arr});
+            add_image_to_wrapper(dataUrl);
         });
 
         // window.close();
@@ -129,7 +175,7 @@ btn_RemoveAllImages.addEventListener("click", async () => {
     // let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     // chrome.tabs.sendMessage(tab.id, { msg: "remove_all_images" });
     div_steps_wrapper.innerHTML = "";
-    var imgs = [];
+    var imgs = {};
     chrome.storage.local.set({imgs});
 });
 

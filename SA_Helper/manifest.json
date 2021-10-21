@@ -49,21 +49,21 @@
       "take_screenshot": {
         "suggested_key": {
           "default": "Alt+Shift+S",
-          "mac": "Alt+Shift+S"
+          "mac": "MacCtrl+Shift+S"
         },
         "description": "Take a screenshot of current tab."
       },
       "remove_markup": {
         "suggested_key": {
           "default": "Alt+Shift+C",
-          "mac": "Alt+Shift+C"
+          "mac": "MacCtrl+Shift+C"
         },
         "description": "Clear all markup on page."
       },
       "markup": {
         "suggested_key": {
           "default": "Alt+Shift+M",
-          "mac": "Alt+Shift+M"
+          "mac": "MacCtrl+Shift+M"
         },
         "description": "Start inspecting and adding markup."
       }

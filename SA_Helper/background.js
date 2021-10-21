@@ -21,6 +21,15 @@ function takeScreenshot(windowId) {
             filename: filename + "_" + "screenshot.png"
         });
 
+        chrome.storage.local.get('imgs', function(imgs) {
+            // console.log(imgs.imgs);
+            var imgs_arr = imgs.imgs;
+            var obj = {};
+            obj[dataUrl] = 0;
+            imgs_arr.push(obj);
+            chrome.storage.local.set({"imgs": imgs_arr});
+        });
+
     });
 }
 
