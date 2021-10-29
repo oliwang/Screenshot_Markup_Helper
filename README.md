@@ -45,7 +45,8 @@ https://garagehackbox.azurewebsites.net/hackathons/2356/projects/109782
 
 7. Click on the screenshot to remove it and it's title
 
-<img width="1439" alt="Screen Shot 2021-10-29 at 10 35 22 AM" src="https://user-images.githubusercontent.com/5282363/139364778-c4de5355-f0b3-4c68-a1fb-fa8293a793f6.png">
+![20211029015221002_screenshot](https://user-images.githubusercontent.com/5282363/139364778-c4de5355-f0b3-4c68-a1fb-fa8293a793f6.png)
+
 
 ## Reference
 https://github.com/cou929/element-inspector.js
