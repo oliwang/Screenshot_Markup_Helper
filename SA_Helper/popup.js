@@ -1,10 +1,160 @@
 let btn_Screenshot = document.getElementById("btn_Screenshot");
+let btn_AddTitle = document.getElementById("btn_AddTitle");
+let btn_AddText = document.getElementById("btn_AddText");
 let btn_ControlAnnotation = document.getElementById("btn_ControlAnnotation");
 let btn_ControlAnnotation_i = document.querySelector("#btn_ControlAnnotation i");
 let btn_ClearAnnotation = document.getElementById("btn_ClearAnnotation");
 let btn_DownloadDocx = document.getElementById("btn_DownloadDocx");
 let div_steps_wrapper = document.getElementById("steps_wrapper");
 
+
+
+
+
+
+
+function add_item_to_wrapper(item_id, item_content) {
+    var str_content = "";
+
+    switch(item_content.type) {
+        case "screenshot":
+            var str_screenshot_template = `<img id="img_${item_id}" data-id="${item_id}" src="${item_content.src}" style="max-width: 80%;">`;
+            str_content = str_screenshot_template;
+            console.log("screenshot");
+            break;
+        case "title":
+            var str_title_template = `<input id="input_${item_id}" data-id="${item_id}" class="uk-input" type="text" placeholder="Please enter a title here: " value="${item_content.value}">`;
+            str_content = str_title_template;
+            console.log("title");
+            break;
+        case "desc":
+            var str_desc_template = `<textarea id="textarea_${item_id}" data-id="${item_id}" class="uk-textarea" rows="5" placeholder="Please enter descriptions here: ">${item_content.value}</textarea>`;
+            str_content = str_desc_template;
+            console.log("desc");
+            break;
+        default:
+            console.log("default");
+    }
+
+    var str_card_template = `
+        <div class="uk-card uk-card-default uk-card-body steps_array_card">
+            <span class="uk-sortable-handle uk-margin-small-right uk-text-left" uk-icon="icon: table" style="width:30px;"></span>
+            ${str_content}
+            <span id="delete_${item_id}" data-id="${item_id}" class="uk-text-right uk-margin-small-left" uk-icon="icon: trash" style="width:30px;"></span>
+        </div>
+    `;
+
+    var new_li = document.createElement("li");
+    new_li.innerHTML = str_card_template;
+    new_li.setAttribute('data-id' , item_id);
+    new_li.id = `#li_${item_id}`;
+
+    div_steps_wrapper.appendChild(new_li);
+
+    chrome.storage.get('steps_array', function(steps){
+        var steps_array = steps.steps_array;
+        steps_array.push(item_id);
+        chrome.storage.set({ "steps_array": steps_array });
+    });
+
+    document.querySelector(`#delete_${item_id}`).addEventListener("click", function (e) {
+        var id = e.target.dataset.id;
+
+        div_steps_wrapper.removeChild(document.getElementById(`#li_${item_id}`));
+
+        chrome.storage.local.get('data_dict', function (data) {
+            var data_dict = data.data_dict;
+
+            delete data_dict[id];
+            
+            chrome.storage.local.set({ "data_dict": data_dict });
+        })
+
+        chrome.storage.get('steps_array', function(steps){
+            var steps_array = steps.steps_array;
+            const index = array.indexOf(id);
+            if (index > -1) {
+                steps_array.splice(index, 1);
+            }
+            chrome.storage.set({ "steps_array": steps_array });
+        });
+    });
+
+    switch (item_content.type) {
+        case "screenshot":
+            document.querySelector(`#img_${item_id}`).addEventListener("load", function (e) {
+                var src = e.target.src;
+                var nWidth = e.target.naturalWidth;
+                var nHeight = e.target.naturalHeight;
+
+                chrome.storage.local.get('data_dict', function (data) {
+                    var data_dict = data.data_dict;
+
+                    for (const [key, value] of Object.entries(data_dict)) {
+                        console.log(key, value);
+                        if (value.src == src) {
+                            value["w"] = nWidth;
+                            value["h"] = nHeight;
+                            break;
+                        }
+                    }
+                    
+                    chrome.storage.local.set({ "data_dict": data_dict });
+                })
+            });
+            
+            break;
+        case "title":
+
+            document.querySelector(`#input_${item_id}`).addEventListener("input", function (e) {
+                var text = e.target.value;
+                var id = e.target.dataset.id;
+
+                chrome.storage.local.get('data_dict', function (data) {
+                    var data_dict = data.data_dict;
+
+                    for (const [key, value] of Object.entries(data_dict)) {
+                        console.log(key, value);
+                        if (key == id) {
+                            value["value"] = text;
+                            break;
+                        }
+                    }
+                    
+                    chrome.storage.local.set({ "data_dict": data_dict });
+                })
+            });
+            
+            break;
+        case "desc":
+            document.querySelector(`#textarea_${item_id}`).addEventListener("input", function (e) {
+                var text = e.target.value;
+                var id = e.target.dataset.id;
+
+                chrome.storage.local.get('data_dict', function (data) {
+                    var data_dict = data.data_dict;
+
+                    for (const [key, value] of Object.entries(data_dict)) {
+                        console.log(key, value);
+                        if (key == id) {
+                            value["value"] = text;
+                            break;
+                        }
+                    }
+                    
+                    chrome.storage.local.set({ "data_dict": data_dict });
+                })
+            });
+
+            break;
+        default:
+            console.log("default");
+
+    }
+
+
+
+}
 
 function add_image_to_wrapper(img_url) {
     var new_img = document.createElement("img");
@@ -149,13 +299,13 @@ function takeScreenshot(windowId) {
         anchor.download = filename + "_" + "screenshot.png";
         anchor.click();
 
-        chrome.storage.local.get('imgs', function (imgs) {
-            // console.log(imgs.imgs);
-            var imgs_arr = imgs.imgs;
+        chrome.storage.local.get('data_dict', function (data) {
+            var data_dict = data.data_dict;
             var is_dup = false;
 
-            for (var i = 0; i < imgs_arr.length; i++) {
-                if (Object.keys(imgs_arr[i])[0] == dataUrl) {
+            for (const [key, value] of Object.entries(data_dict)) {
+                console.log(key, value);
+                if (value.type == "screenshot" && value.src == dataUrl) {
                     is_dup = true;
                     break;
                 }
@@ -163,14 +313,44 @@ function takeScreenshot(windowId) {
 
             if (!is_dup) {
                 var obj = {};
-                obj[dataUrl] = {"w": 0, "h": 0, "text": ""};
-                imgs_arr.push(obj);
-                chrome.storage.local.set({ "imgs": imgs_arr });
-                add_image_to_wrapper(dataUrl);
+                obj["type"] = "screenshot";
+                obj["src"] = dataUrl;
+                obj["w"] = 0;
+                obj["h"] = 0;
+
+                var obj_id = "screenshot_" + filename;
+
+                data_dict[obj_id] = obj;
+                // add to wrapper
+                chrome.storage.local.set({ "data_dict": data_dict });
+
             }
 
-            
+
+
         });
+
+        // chrome.storage.local.get('imgs', function (imgs) {
+        //     // console.log(imgs.imgs);
+        //     var imgs_arr = imgs.imgs;
+        //     var is_dup = false;
+
+        //     for (var i = 0; i < imgs_arr.length; i++) {
+        //         if (Object.keys(imgs_arr[i])[0] == dataUrl) {
+        //             is_dup = true;
+        //             break;
+        //         }
+        //     }
+
+        //     if (!is_dup) {
+        //         var obj = {};
+        //         obj[dataUrl] = {"w": 0, "h": 0, "text": ""};
+        //         imgs_arr.push(obj);
+        //         chrome.storage.local.set({ "imgs": imgs_arr });
+        //         add_image_to_wrapper(dataUrl);
+        //     }
+
+        // });
 
         // window.close();
 
@@ -184,8 +364,6 @@ btn_Screenshot.addEventListener("click", async () => {
     console.log("clicked on screenshot_btn");
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     takeScreenshot(tab.windowId);
-
-
 });
 
 btn_ControlAnnotation.addEventListener("click", async () => {
@@ -228,6 +406,11 @@ btn_RemoveAllImages.addEventListener("click", async () => {
     var imgs = [];
     chrome.storage.local.set({ imgs });
 });
+
+btn_AddTitle.addEventListener("click", async () => { })
+
+btn_AddText.addEventListener("click", async () => { })
+
 
 
 
