@@ -166,48 +166,212 @@ function clearMarkup() {
 }
 
 function downloadDocx() {
+    // alert("downloadDocx");
+
+    var paragraphs = [];
+
+    chrome.storage.local.get(["data_dict", "steps_array"], (result) => {
+        // alert("get");
+        var data_dict = result.data_dict;
+        var steps_array = result.steps_array;
+
+        var steps_numbering = 1;
+        for (var i = 0; i < steps_array.length; i++) {
+            if (data_dict[steps_array[i]].type == "heading") {
+                data_dict[steps_array[i]].numbering = steps_numbering;
+                steps_numbering++;
+            }
+        }
+        chrome.storage.local.set({ "data_dict": data_dict });
+
+        paragraphs = new Array(steps_array.length).fill(null);
+
+
+        steps_array.forEach(function (step, index) { 
+            var obj_id = step;
+            var obj = data_dict[obj_id];
+            var curr_paragraph = new docx.Paragraph({});
+
+            switch (obj.type) {
+                case "screenshot":
+                    var img_src = obj.src;
+                    var w = obj.w;
+                    var h = obj.h;
+
+                    var curr_paragraph = new docx.Paragraph({
+                        children: [
+                            new docx.ImageRun({
+                                data: img_src,
+                                transformation: {
+                                    width: 600,
+                                    height: Math.floor(600 * h / w),
+                                },
+                            })
+                        ]
+                    });
+
+
+                    break;
+                case "heading":
+
+                    var text = obj.value;
+                    var numbering = obj.numbering;
+
+                    var curr_paragraph = new docx.Paragraph({
+                        text: text,
+                        numbering: {
+                            reference: "repro-steps-numbering",
+                            level: 0,
+                        },
+                        heading: docx.HeadingLevel.HEADING_2,
+
+                    });
+
+
+                    break;
+                case "desc":
+                    var text = obj.value;
+
+                    var curr_paragraph = new docx.Paragraph({
+                        children: [
+                            new docx.TextRun(text + "\n"),
+
+                        ]
+                    });
+
+                    break;
+                default:
+                    console.log("default");
+            }
+
+            paragraphs[index] = curr_paragraph;
+
+        });
+
+        const doc = new docx.Document({
+            numbering: {
+                config: [
+                    {
+                        reference: "repro-steps-numbering",
+                        levels: [
+                            {
+                                level: 0,
+                                format: docx.LevelFormat.Decimal,
+                                text: "%1.",
+                                alignment: docx.AlignmentType.START,
+                            },
+                        ],
+                    },
+                ],
+            },
+            sections: [
+                {
+                    properties: {},
+                    children: paragraphs
+                }
+            ]
+        })
+
+
+        docx.Packer.toBlob(doc).then((blob) => {
+            console.log(blob);
+            var filename = new Date().toISOString()
+            filename = filename.replace(/[-:.TZ]/g, '');
+            saveAs(blob, "ReproSteps_" + filename + ".docx");
+            console.log("Document created successfully");
+        });
+
+    });
+}
+
+
+function downloadDocx2() {
     var promises = [];
     var paragraphs = [];
 
-    chrome.storage.local.get('imgs', function (imgs) {
-        var imgs_arr = imgs.imgs;
-        console.log(imgs);
-        paragraphs = new Array(imgs_arr.length).fill(null);
+    const numbering = new docx.Numbering();
+    const abstractNum = numbering.createAbstractNumbering();
+    abstractNum.createLevel(0, "decimal", "%1. ", "start").addParagraphProperty(new Indent(720, 260));
+    const concrete = numbering.createConcreteNumbering(abstractNum);
 
-        for (var i = 0; i < imgs_arr.length; i++) {
-            var img_src = Object.keys(imgs_arr[i])[0];
-            var w = imgs_arr[i][img_src].w;
-            var h = imgs_arr[i][img_src].h;
-            var text = imgs_arr[i][img_src].text;
+    chrome.storage.local.get(["data_dict", "steps_array"], (result) => {
+        alert("get data_dict, steps_array");
+        var data_dict = result.data_dict;
+        var steps_array = result.steps_array;
 
-            console.log(img_src, w, h);
+        var steps_numbering = 1;
+        for (var i = 0; i < steps_array.length; i++) {
+            if (data_dict[steps_array[i]].type == "heading") {
+                data_dict[steps_array[i]].numbering = steps_numbering;
+                steps_numbering++;
+            }
+        }
+        chrome.storage.local.set({ "data_dict": data_dict });
+
+        paragraphs = new Array(steps_array.length).fill(null);
+
+        steps_array.forEach((step, index) => {
+            var obj_id = step;
+            var obj = data_dict[obj_id];
 
             var p = new Promise((resolve, reject) => {
-                var curr_paragraph = new docx.Paragraph({
-                    children: [
-                        new docx.TextRun((i + 1).toString() + ". " + text + "\n"),
-                        new docx.ImageRun({
-                            data: img_src,
-                            transformation: {
-                                width: 600,
-                                height: Math.floor(600*h/w),
-                            },
-                        }),
-                        new docx.TextRun({
-                            text: "",
-                            break: 2,
-                        })
-                    ]
-                });
-                paragraphs[i] = curr_paragraph;
+                switch (obj.type) {
+                    case "screenshot":
+                        var img_src = obj.src;
+                        var w = obj.w;
+                        var h = obj.h;
+
+                        var curr_paragraph = new docx.Paragraph({
+                            children: [
+                                new docx.ImageRun({
+                                    data: img_src,
+                                    transformation: {
+                                        width: 600,
+                                        height: Math.floor(600 * h / w),
+                                    },
+                                })
+                            ]
+                        });
+
+
+                        break;
+                    case "heading":
+
+                        var text = obj.value;
+                        var numbering = obj.numbering;
+
+                        var curr_paragraph = new docx.Paragraph({
+                            text: text,
+                            heading: HeadingLevel.HEADING_1
+
+                        });
+
+                        break;
+                    case "desc":
+                        var text = obj.value;
+
+                        var curr_paragraph = new docx.Paragraph({
+                            children: [
+                                new docx.TextRun(text + "\n"),
+
+                            ]
+                        });
+
+                        break;
+                    default:
+                        console.log("default");
+                }
+
+                paragraphs[index] = curr_paragraph;
                 resolve();
             });
+
             promises.push(p);
-        }
+        })
 
 
         Promise.all(promises).then(() => {
-            // console.log(paragraphs);
+            alert("promises all");
             const doc = new docx.Document({
                 sections: [
                     {

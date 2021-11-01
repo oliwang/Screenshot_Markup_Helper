@@ -17,17 +17,14 @@ function add_item_to_wrapper(item_id, item_content) {
         case "screenshot":
             var str_screenshot_template = `<img id="img_${item_id}" data-id="${item_id}" src="${item_content.src}">`;
             str_content = str_screenshot_template;
-            console.log("screenshot");
             break;
         case "heading":
-            var str_title_template = `<input id="input_${item_id}" data-id="${item_id}" class="uk-input" type="text" placeholder="Please enter a title here: " value="${item_content.value}">`;
+            var str_title_template = `<input id="input_${item_id}" data-id="${item_id}" class="uk-input" type="text" placeholder="Please enter a title here" value="${item_content.value}">`;
             str_content = str_title_template;
-            console.log("title");
             break;
         case "desc":
-            var str_desc_template = `<textarea id="textarea_${item_id}" data-id="${item_id}" class="uk-textarea" rows="5" placeholder="Please enter descriptions here: ">${item_content.value}</textarea>`;
+            var str_desc_template = `<textarea id="textarea_${item_id}" data-id="${item_id}" class="uk-textarea" rows="3" placeholder="Please enter descriptions here">${item_content.value}</textarea>`;
             str_content = str_desc_template;
-            console.log("desc");
             break;
         default:
             console.log("default");
@@ -48,39 +45,27 @@ function add_item_to_wrapper(item_id, item_content) {
 
     div_steps_wrapper.appendChild(new_li);
 
-    // chrome.storage.get('steps_array', function(steps){
-    //     var steps_array = steps.steps_array;
-    //     steps_array.push(item_id);
-    //     chrome.storage.set({ "steps_array": steps_array });
-    // });
-
-    console.log(document.querySelector(`#delete_${item_id}`));
-
     var delete_btn = document.querySelector(`#delete_${item_id}`);
     
     delete_btn.addEventListener("click", function (e) {
-        var id = delete_btn.getAttribute("data-id");;
-        console.log(id);
-
+        var id = delete_btn.getAttribute("data-id");
 
         div_steps_wrapper.removeChild(document.getElementById(`#li_${item_id}`));
 
-        chrome.storage.local.get('data_dict', function (data) {
-            var data_dict = data.data_dict;
-
+        chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
+            var data_dict = result.data_dict;
+            var steps_array = result.steps_array;
+    
             delete data_dict[id];
-            
-            chrome.storage.local.set({ "data_dict": data_dict });
-        })
 
-        chrome.storage.local.get('steps_array', function(steps){
-            var steps_array = steps.steps_array;
             const index = steps_array.indexOf(id);
             if (index > -1) {
                 steps_array.splice(index, 1);
             }
-            chrome.storage.local.set({ "steps_array": steps_array });
+
+            chrome.storage.local.set({ "data_dict": data_dict, "steps_array": steps_array });
         });
+
     });
 
     switch (item_content.type) {
@@ -94,7 +79,6 @@ function add_item_to_wrapper(item_id, item_content) {
                     var data_dict = data.data_dict;
 
                     for (const [key, value] of Object.entries(data_dict)) {
-                        console.log(key, value);
                         if (value.src == src) {
                             value["w"] = nWidth;
                             value["h"] = nHeight;
@@ -117,7 +101,6 @@ function add_item_to_wrapper(item_id, item_content) {
                     var data_dict = data.data_dict;
 
                     for (const [key, value] of Object.entries(data_dict)) {
-                        console.log(key, value);
                         if (key == id) {
                             value["value"] = text;
                             break;
@@ -138,7 +121,6 @@ function add_item_to_wrapper(item_id, item_content) {
                     var data_dict = data.data_dict;
 
                     for (const [key, value] of Object.entries(data_dict)) {
-                        console.log(key, value);
                         if (key == id) {
                             value["value"] = text;
                             break;
@@ -159,104 +141,6 @@ function add_item_to_wrapper(item_id, item_content) {
 
 }
 
-function add_image_to_wrapper(img_url) {
-    var new_img = document.createElement("img");
-    var new_input = document.createElement("input");
-    new_img.src = img_url;
-    new_img.style.width = "100%";
-    var filename = new Date().toISOString()
-    filename = filename.replace(/[-:.TZ]/g, '');
-    new_img.id = "img_" + filename;
-    new_img.style.margin = "5px 0 10px 0";
-    new_img.style.border = "1px solid #ccc";
-    // console.log(new_img);
-    new_input.style.width = "100%";
-    new_input.style.margin = "0px 0px";
-    new_input.style.padding = "0px 0px";
-    new_input.style.borderWidth = "1px";
-    new_input.id = "input_" + filename;
-    new_input.placeholder = "Enter step description text here:";
-
-    div_steps_wrapper.appendChild(new_input);
-    div_steps_wrapper.appendChild(new_img);
-
-    chrome.storage.local.get('imgs', function (imgs) {
-        var imgs_arr = imgs.imgs;
-
-        for (var i = 0; i < imgs_arr.length; i++) {
-            if (Object.keys(imgs_arr[i])[0] == img_url) {
-                new_input.value = imgs_arr[i][img_url]["text"];
-                break;
-            }
-        }
-
-        chrome.storage.local.set({ "imgs": imgs_arr });
-    })
-
-    new_img.addEventListener("click", function (e) {
-        // console.log(e.target);
-        // console.log(e.target.src);
-        var ele_id = e.target.id;
-        var ele_input_id = e.target.id.replace("img_", "input_");
-        var ele_src = e.target.src;
-        div_steps_wrapper.removeChild(document.getElementById(ele_id));
-        div_steps_wrapper.removeChild(document.getElementById(ele_input_id));
-        chrome.storage.local.get('imgs', function (imgs) {
-            var imgs_arr = imgs.imgs;
-
-            for (var i = 0; i < imgs_arr.length; i++) {
-                if (Object.keys(imgs_arr[i])[0] == ele_src) {
-                    imgs_arr.splice(i, 1);
-                    break;
-                }
-            }
-
-            chrome.storage.local.set({ "imgs": imgs_arr });
-        })
-    });
-
-    new_img.addEventListener("load", function (e) {
-
-        var src = e.target.src;
-        var nWidth = e.target.naturalWidth;
-        var nHeight = e.target.naturalHeight;
-
-        chrome.storage.local.get('imgs', function (imgs) {
-            var imgs_arr = imgs.imgs;
-
-            for (var i = 0; i < imgs_arr.length; i++) {
-                if (Object.keys(imgs_arr[i])[0] == src) {
-                    imgs_arr[i][src]["w"] = nWidth;
-                    imgs_arr[i][src]["h"] = nHeight;
-                    break;
-                }
-            }
-
-            chrome.storage.local.set({ "imgs": imgs_arr });
-        })
-
-    });
-
-    new_input.addEventListener("input", function (e) {
-        var text = new_input.value;
-
-        chrome.storage.local.get('imgs', function (imgs) {
-            var imgs_arr = imgs.imgs;
-
-            for (var i = 0; i < imgs_arr.length; i++) {
-                if (Object.keys(imgs_arr[i])[0] == img_url) {
-                    console.log("test found", imgs_arr[i][img_url]);
-                    imgs_arr[i][img_url]["text"] = text;
-                    break;
-                }
-            }
-            console.log(imgs_arr);
-
-            chrome.storage.local.set({ "imgs": imgs_arr });
-        })
-    });
-
-}
 
 (function () {
     // alert("init");
@@ -271,9 +155,20 @@ function add_image_to_wrapper(img_url) {
         steps_array.forEach(obj_id => {
             add_item_to_wrapper(obj_id, data_dict[obj_id]);
         });
-    });
+    });  
 
-    
+    UIkit.util.on('#steps_wrapper', 'moved', function (item) {
+
+        var li_array = document.querySelectorAll("#steps_wrapper>li");
+
+        var steps_array = [];
+
+        li_array.forEach(li => {
+            steps_array.push(li.getAttribute("data-id"));
+        });
+
+        chrome.storage.local.set({ "steps_array": steps_array });
+    });
 
 })();
 
@@ -302,8 +197,9 @@ function takeScreenshot(windowId) {
         anchor.download = filename + "_" + "screenshot.png";
         anchor.click();
 
-        chrome.storage.local.get('data_dict', function (data) {
-            var data_dict = data.data_dict;
+        chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
+            var data_dict = result.data_dict;
+            var steps_array = result.steps_array;
             var is_dup = false;
 
             for (const [key, value] of Object.entries(data_dict)) {
@@ -324,49 +220,17 @@ function takeScreenshot(windowId) {
                 var obj_id = "screenshot_" + filename;
 
                 data_dict[obj_id] = obj;
+                steps_array.push(obj_id);
                 
-                chrome.storage.local.set({ "data_dict": data_dict });
-
-                chrome.storage.local.get('steps_array', function (steps) {
-                    var steps_array = steps.steps_array;
-                    steps_array.push(obj_id);
-                    chrome.storage.local.set({ "steps_array": steps_array });
-                });
+                chrome.storage.local.set({ "data_dict": data_dict, "steps_array": steps_array });
 
                 add_item_to_wrapper(obj_id, obj);
 
             }
-
-
-
+    
+ 
         });
 
-        // chrome.storage.local.get('imgs', function (imgs) {
-        //     // console.log(imgs.imgs);
-        //     var imgs_arr = imgs.imgs;
-        //     var is_dup = false;
-
-        //     for (var i = 0; i < imgs_arr.length; i++) {
-        //         if (Object.keys(imgs_arr[i])[0] == dataUrl) {
-        //             is_dup = true;
-        //             break;
-        //         }
-        //     }
-
-        //     if (!is_dup) {
-        //         var obj = {};
-        //         obj[dataUrl] = {"w": 0, "h": 0, "text": ""};
-        //         imgs_arr.push(obj);
-        //         chrome.storage.local.set({ "imgs": imgs_arr });
-        //         add_image_to_wrapper(dataUrl);
-        //     }
-
-        // });
-
-        // window.close();
-
-        // var url = dataUrl.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
-        // window.open(url);
     });
 }
 
@@ -415,7 +279,8 @@ btn_RemoveAllImages.addEventListener("click", async () => {
     // chrome.tabs.sendMessage(tab.id, { msg: "remove_all_images" });
     div_steps_wrapper.innerHTML = "";
     var steps_array = [];
-    chrome.storage.local.set({ steps_array });
+    var data_dict = {};
+    chrome.storage.local.set({ "data_dict": data_dict, "steps_array": steps_array });
 });
 
 btn_AddHeading.addEventListener("click", async () => { 
@@ -424,21 +289,16 @@ btn_AddHeading.addEventListener("click", async () => {
     obj["type"] = "heading";
     obj["value"] = "";
 
-    chrome.storage.local.get('data_dict', function (data) {
-        var data_dict = data.data_dict;
+    chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
+        var data_dict = result.data_dict;
+        var steps_array = result.steps_array;
+
         data_dict[obj_id] = obj;
-        chrome.storage.local.set({ "data_dict": data_dict });
+        steps_array.push(obj_id);
 
-        chrome.storage.local.get('steps_array', function (steps) {
-            var steps_array = steps.steps_array;
-            steps_array.push(obj_id);
-            chrome.storage.local.set({ "steps_array": steps_array });
+        chrome.storage.local.set({ "data_dict": data_dict, "steps_array": steps_array });
 
-            // add to wrapper
-            add_item_to_wrapper(obj_id, obj);
-        });
-
-
+        add_item_to_wrapper(obj_id, obj);
     });
 
 })
@@ -449,21 +309,17 @@ btn_AddDesc.addEventListener("click", async () => {
     obj["type"] = "desc";
     obj["value"] = "";
 
-    chrome.storage.local.get('data_dict', function (data) {
-        var data_dict = data.data_dict;
+
+    chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
+        var data_dict = result.data_dict;
+        var steps_array = result.steps_array;
+
         data_dict[obj_id] = obj;
-        chrome.storage.local.set({ "data_dict": data_dict });
+        steps_array.push(obj_id);
 
-        chrome.storage.local.get('steps_array', function (steps) {
-            var steps_array = steps.steps_array;
-            steps_array.push(obj_id);
-            chrome.storage.local.set({ "steps_array": steps_array });
+        chrome.storage.local.set({ "data_dict": data_dict, "steps_array": steps_array });
 
-            // add to wrapper
-            add_item_to_wrapper(obj_id, obj);
-        });
-
-
+        add_item_to_wrapper(obj_id, obj);
     });
 
  })

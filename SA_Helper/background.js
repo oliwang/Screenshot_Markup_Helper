@@ -1,13 +1,11 @@
 // background.js
 
 let control_status = 'play';
-let imgs = [];
 let steps_array = [];
 let data_dict = {};
 
 chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.sync.set({ control_status });
-    chrome.storage.local.set({ imgs });
     chrome.storage.local.set({ steps_array });
     chrome.storage.local.set({ data_dict });
 
@@ -25,13 +23,14 @@ function takeScreenshot(windowId) {
             filename: filename + "_" + "screenshot.png"
         });
 
-        chrome.storage.local.get('imgs', function(imgs) {
-            // console.log(imgs.imgs);
-            var imgs_arr = imgs.imgs;
+        chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
+            var data_dict = result.data_dict;
+            var steps_array = result.steps_array;
             var is_dup = false;
 
-            for (var i = 0; i < imgs_arr.length; i++) {
-                if (Object.keys(imgs_arr[i])[0] == dataUrl) {
+            for (const [key, value] of Object.entries(data_dict)) {
+                console.log(key, value);
+                if (value.type == "screenshot" && value.src == dataUrl) {
                     is_dup = true;
                     break;
                 }
@@ -39,11 +38,23 @@ function takeScreenshot(windowId) {
 
             if (!is_dup) {
                 var obj = {};
-                obj[dataUrl] = {"w": 0, "h": 0, "text": ""};
-                imgs_arr.push(obj);
-                chrome.storage.local.set({ "imgs": imgs_arr });
-                add_image_to_wrapper(dataUrl);
+                obj["type"] = "screenshot";
+                obj["src"] = dataUrl;
+                obj["w"] = 0;
+                obj["h"] = 0;
+
+                var obj_id = "screenshot_" + filename;
+
+                data_dict[obj_id] = obj;
+                steps_array.push(obj_id);
+                
+                chrome.storage.local.set({ "data_dict": data_dict, "steps_array": steps_array });
+
+                add_item_to_wrapper(obj_id, obj);
+
             }
+    
+ 
         });
 
     });
