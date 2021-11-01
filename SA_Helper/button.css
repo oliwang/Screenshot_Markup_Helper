@@ -50,3 +50,15 @@ button {
 
   margin: 10px 0;
 }
+
+#steps_wrapper .uk-sortable-handle {
+  width:30px;
+}
+
+#steps_wrapper .steps-card-delete-btn {
+  width:30px;
+}
+
+#steps_wrapper .uk-card img {
+  max-width: 80%;
+}
