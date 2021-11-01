@@ -1,20 +1,82 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="button.css">
-  </head>
-  <body>
-    <div class="btn_wrapper">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="uikit.min.css" />
+  <script src="uikit.min.js"></script>
+  <script src="uikit-icons.min.js"></script>
+  <link rel="stylesheet" href="button.css">
+</head>
+
+<body>
+  <div class="content">
+    <div class="btn_wrapper" uk-sticky>
       <button id="btn_Screenshot" title="Take Screenshot (Alt+Shift+S)"><i class="fas fa-camera"></i></button>
-      <!-- <button id="btn_ControlAnnotation" class="play"><i class="fas fa-play"></i></button> -->
+      <button id="btn_AddTitle" title="Add Heading"><i class="fas fa-heading"></i></button>
+      <button id="btn_AddText" title="Add Text"><i class="fas fa-align-justify"></i></button>
+
+      <hr class="uk-divider-vertical">
       <button id="btn_ControlAnnotation" title="Start/Stop Annotation (Alt+Shift+M)"><i class="fas"></i></button>
-      <!-- <i class="fas fa-pause"></i> -->
       <button id="btn_ClearAnnotation" title="Clear Annotation (Alt+Shift+C)"><i class="fas fa-eraser"></i></button>
       <button id="btn_RemoveAllImages" title="Remove All Images"><i class="fas fa-broom"></i></button>
       <button id="btn_DownloadDocx" title="Download Docx"><i class="fas fa-download"></i></button>
+      <!-- <button id="btn_Screenshot" title="Take Screenshot (Alt+Shift+S)"><i class="fas fa-camera"></i></button> -->
+      <!-- <button id="btn_ControlAnnotation" class="play"><i class="fas fa-play"></i></button> -->
+
+      <!-- <i class="fas fa-pause"></i> -->
+
+
+
     </div>
-    <div id="steps_wrapper" ></div>
-    <script src="fontawesome.js" crossorigin="anonymous"></script>
-    <script src="popup.js"></script>
-  </body>
+
+    <!-- <div id="steps_wrapper"></div> -->
+
+    <ul uk-sortable id="steps_wrapper" class="uk-nav uk-nav-default">
+      <li>
+        <div class="uk-card uk-card-default uk-card-body steps_array_card">
+          <span class="uk-sortable-handle uk-margin-small-right uk-text-left" uk-icon="icon: table" style="width:30px;"></span>
+          <input class="uk-input" type="text" placeholder="Input">
+          <span class="uk-text-right uk-margin-small-left" uk-icon="icon: trash" style="width:30px;"></span>
+        </div>
+      </li>
+      <li>
+        <div class="uk-card uk-card-default uk-card-body steps_array_card">
+          <span class="uk-sortable-handle uk-margin-small-right uk-text-left" uk-icon="icon: table" style="width:30px;"></span>
+          <img src="20211029033635948_screenshot.png" style="max-width: 80%;">
+          <span class="uk-text-right uk-margin-small-left" uk-icon="icon: trash" style="width:30px;"></span>
+        </div>
+      </li>
+      <li>
+        <div class="uk-card uk-card-default uk-card-body steps_array_card">
+          <span class="uk-sortable-handle uk-margin-small-right uk-text-left" uk-icon="icon: table" style="width:30px;"></span>
+          <textarea class="uk-textarea" rows="5" placeholder="Textarea"></textarea>
+          <span class="uk-text-right uk-margin-small-left" uk-icon="icon: trash" style="width:30px;"></span>
+        </div>
+      </li>
+
+    </ul>
+
+    <!-- <ul uk-sortable id="steps_wrapper" class="uk-nav uk-nav-default" uk-sortable="cls-custom: uk-box-shadow-small uk-flex uk-flex-middle uk-background" style="width:100%;">
+      <li style="width:100%;">
+        <div class="uk-card uk-card-default uk-card-body steps_array_card" style="width:100%;flex-wrap: nowrap; align-items: stretch;">
+          <span style="flex-wrap: nowrap; align-items: stretch;">
+            <span class="uk-sortable-handle uk-margin-small-right uk-text-center" uk-icon="icon: table" style="width:30px;"></span>
+            <input class="uk-input" type="text" placeholder="Input">
+          </span>
+          <span class="uk-text-center" uk-icon="icon: trash" style="width:30px"></span>
+      </div>
+      </li>
+      <li><a href="#">Item</a></li>
+      <li><a href="#">Item</a></li>
+      <li><a href="#">Item</a></li>
+    </ul> -->
+
+  </div>
+
+  <script src="fontawesome.js" crossorigin="anonymous"></script>
+  <script src="popup.js"></script>
+</body>
+
 </html>

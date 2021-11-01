@@ -2,10 +2,14 @@
 
 let control_status = 'play';
 let imgs = [];
+let steps_array = [];
+let data_dict = {};
 
 chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.sync.set({ control_status });
     chrome.storage.local.set({ imgs });
+    chrome.storage.local.set({ steps_array });
+    chrome.storage.local.set({ data_dict });
 
 });
 
