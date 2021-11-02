@@ -13,7 +13,7 @@ let div_steps_wrapper = document.getElementById("steps_wrapper");
 function add_item_to_wrapper(item_id, item_content) {
     var str_content = "";
 
-    switch(item_content.type) {
+    switch (item_content.type) {
         case "screenshot":
             var str_screenshot_template = `<img id="img_${item_id}" data-id="${item_id}" src="${item_content.src}">`;
             str_content = str_screenshot_template;
@@ -40,22 +40,22 @@ function add_item_to_wrapper(item_id, item_content) {
 
     var new_li = document.createElement("li");
     new_li.innerHTML = str_card_template;
-    new_li.setAttribute('data-id' , item_id);
+    new_li.setAttribute('data-id', item_id);
     new_li.id = `#li_${item_id}`;
 
     div_steps_wrapper.appendChild(new_li);
 
     var delete_btn = document.querySelector(`#delete_${item_id}`);
-    
+
     delete_btn.addEventListener("click", function (e) {
         var id = delete_btn.getAttribute("data-id");
 
         div_steps_wrapper.removeChild(document.getElementById(`#li_${item_id}`));
 
-        chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
+        chrome.storage.local.get(["data_dict", "steps_array"], (result) => {
             var data_dict = result.data_dict;
             var steps_array = result.steps_array;
-    
+
             delete data_dict[id];
 
             const index = steps_array.indexOf(id);
@@ -85,11 +85,11 @@ function add_item_to_wrapper(item_id, item_content) {
                             break;
                         }
                     }
-                    
+
                     chrome.storage.local.set({ "data_dict": data_dict });
                 })
             });
-            
+
             break;
         case "heading":
 
@@ -106,11 +106,11 @@ function add_item_to_wrapper(item_id, item_content) {
                             break;
                         }
                     }
-                    
+
                     chrome.storage.local.set({ "data_dict": data_dict });
                 })
             });
-            
+
             break;
         case "desc":
             document.querySelector(`#textarea_${item_id}`).addEventListener("input", function (e) {
@@ -126,7 +126,7 @@ function add_item_to_wrapper(item_id, item_content) {
                             break;
                         }
                     }
-                    
+
                     chrome.storage.local.set({ "data_dict": data_dict });
                 })
             });
@@ -148,14 +148,14 @@ function add_item_to_wrapper(item_id, item_content) {
         setControlBtnStatus(control_status);
     });
 
-    chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
+    chrome.storage.local.get(["data_dict", "steps_array"], (result) => {
         var data_dict = result.data_dict;
         var steps_array = result.steps_array;
 
         steps_array.forEach(obj_id => {
             add_item_to_wrapper(obj_id, data_dict[obj_id]);
         });
-    });  
+    });
 
     UIkit.util.on('#steps_wrapper', 'moved', function (item) {
 
@@ -186,59 +186,28 @@ function generateTimestampFilename() {
     return filename;
 }
 
-async function takeScreenshot(windowId) {
+function takeScreenshot(windowId, tabId) {
     // alert("takeScreenshot")
     chrome.tabs.captureVisibleTab(windowId, { format: "png" }, (dataUrl) => {
         // console.log(dataUrl);
-        var filename = new Date().toISOString()
-        filename = filename.replace(/[-:.TZ]/g, '');
-        var anchor = document.createElement("a");
-        anchor.href = dataUrl;
-        anchor.download = filename + "_" + "screenshot.png";
-        anchor.click();
+        
+        // var anchor = document.createElement("a");
+        // anchor.href = dataUrl;
+        // anchor.download = filename + "_" + "screenshot.png";
+        // anchor.click();
 
-        chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
-            var data_dict = result.data_dict;
-            var steps_array = result.steps_array;
-            var is_dup = false;
-
-            for (const [key, value] of Object.entries(data_dict)) {
-                console.log(key, value);
-                if (value.type == "screenshot" && value.src == dataUrl) {
-                    is_dup = true;
-                    break;
-                }
-            }
-
-            if (!is_dup) {
-                var obj = {};
-                obj["type"] = "screenshot";
-                obj["src"] = dataUrl;
-                obj["w"] = 0;
-                obj["h"] = 0;
-
-                var obj_id = "screenshot_" + filename;
-
-                data_dict[obj_id] = obj;
-                steps_array.push(obj_id);
-                
-                chrome.storage.local.set({ "data_dict": data_dict, "steps_array": steps_array });
-
-                add_item_to_wrapper(obj_id, obj);
-
-            }
-    
- 
-        });
+        chrome.tabs.sendMessage(tabId, { msg: 'crop', data: { sender: "popup", dataUrl: dataUrl } }, function (response) { });
 
     });
 }
 
 
+
+
 btn_Screenshot.addEventListener("click", async () => {
     console.log("clicked on screenshot_btn");
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    takeScreenshot(tab.windowId);
+    takeScreenshot(tab.windowId, tab.id);
 });
 
 btn_ControlAnnotation.addEventListener("click", async () => {
@@ -283,13 +252,13 @@ btn_RemoveAllImages.addEventListener("click", async () => {
     chrome.storage.local.set({ "data_dict": data_dict, "steps_array": steps_array });
 });
 
-btn_AddHeading.addEventListener("click", async () => { 
+btn_AddHeading.addEventListener("click", async () => {
     var obj_id = "heading_" + generateTimestampFilename();
     var obj = {};
     obj["type"] = "heading";
     obj["value"] = "";
 
-    chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
+    chrome.storage.local.get(["data_dict", "steps_array"], (result) => {
         var data_dict = result.data_dict;
         var steps_array = result.steps_array;
 
@@ -310,7 +279,7 @@ btn_AddDesc.addEventListener("click", async () => {
     obj["value"] = "";
 
 
-    chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
+    chrome.storage.local.get(["data_dict", "steps_array"], (result) => {
         var data_dict = result.data_dict;
         var steps_array = result.steps_array;
 
@@ -322,7 +291,7 @@ btn_AddDesc.addEventListener("click", async () => {
         add_item_to_wrapper(obj_id, obj);
     });
 
- })
+})
 
 
 

@@ -1,73 +1,83 @@
 {
-    "name": "Screenshot_Markup_Helper", 
-    "description": "Help Microsoft CSS Support Engineers with their work",
-    "version": "0.1",
-    "manifest_version": 3,
-    "background": {
-        "service_worker": "background.js"
-    },
-    "permissions": [
-      "activeTab",
-      "tabs",
-      "storage",
-      "unlimitedStorage",
-      "browsingData",
-      "notifications",
-      "declarativeContent",
-      "scripting",
-      "downloads"
-    ],
-    "host_permissions": [
-      "<all_urls>"
-    ],
-    "content_scripts": [{
-      "matches": ["<all_urls>"],
+  "name": "Screenshot_Markup_Helper",
+  "description": "Help Microsoft CSS Support Engineers with their work",
+  "version": "0.1",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "unlimitedStorage",
+    "browsingData",
+    "notifications",
+    "declarativeContent",
+    "scripting",
+    "downloads"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "css": [
+        "uikit.min.css",
+        "croppr.min.css"
+      ],
       "js": [
-        "element-inspector.js", 
+        "croppr.min.js",
+        "element-inspector.js",
         "docx.js",
         "FileSaver.js",
+        "uikit-icons.min.js",
+        "uikit.min.js",
         "content.js"
       ]
-    }],
-    "action": {
-        "default_popup": "popup.html",
-        "default_icon": {
-          "16": "/images/icon16.png",
-          "32": "/images/icon32.png",
-          "48": "/images/icon48.png",
-          "128": "/images/icon128.png"
-        }
-    },
-    "icons": {
+      
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
       "16": "/images/icon16.png",
       "32": "/images/icon32.png",
       "48": "/images/icon48.png",
       "128": "/images/icon128.png"
-    },
-    "options_page": "options.html",
-    "commands": {
-      "take_screenshot": {
-        "suggested_key": {
-          "default": "Alt+Shift+S",
-          "mac": "MacCtrl+Shift+S"
-        },
-        "description": "Take a screenshot of current tab."
-      },
-      "remove_markup": {
-        "suggested_key": {
-          "default": "Alt+Shift+C",
-          "mac": "MacCtrl+Shift+C"
-        },
-        "description": "Clear all markup on page."
-      },
-      "markup": {
-        "suggested_key": {
-          "default": "Alt+Shift+M",
-          "mac": "MacCtrl+Shift+M"
-        },
-        "description": "Start inspecting and adding markup."
-      }
-      
     }
-    
+  },
+  "icons": {
+    "16": "/images/icon16.png",
+    "32": "/images/icon32.png",
+    "48": "/images/icon48.png",
+    "128": "/images/icon128.png"
+  },
+  "options_page": "options.html",
+  "commands": {
+    "take_screenshot": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "MacCtrl+Shift+S"
+      },
+      "description": "Take a screenshot of current tab."
+    },
+    "remove_markup": {
+      "suggested_key": {
+        "default": "Alt+Shift+C",
+        "mac": "MacCtrl+Shift+C"
+      },
+      "description": "Clear all markup on page."
+    },
+    "markup": {
+      "suggested_key": {
+        "default": "Alt+Shift+M",
+        "mac": "MacCtrl+Shift+M"
+      },
+      "description": "Start inspecting and adding markup."
+    }
+  }
 }

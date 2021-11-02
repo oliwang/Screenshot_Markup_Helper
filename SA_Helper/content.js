@@ -106,6 +106,7 @@ var ei = new ElementInspector({
         markup.style.backgroundColor = 'rgba(255,255,0,0.3)';
         markup.classList.add("SA_markup");
         markup.style.position = 'absolute';
+        markup.style.zIndex = '999';
 
         document.body.appendChild(markup);
     }
@@ -139,6 +140,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         } else if (request.msg === 'download_docx') {
             downloadDocx();
+        } else if (request.msg === 'crop') {
+            console.log("content.js crop image", request.data.dataUrl);
+            cropImage(request.data.sender, request.data.dataUrl);
         }
 
     }
@@ -287,3 +291,76 @@ function downloadDocx() {
     });
 }
 
+function cropImage(sender, dataUrl) {
+    
+    var modal_html_str = 
+    `<div id="crop-modal" class="uk-modal-full" uk-modal>
+        <div class="uk-modal-dialog">
+            <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
+            <div class="uk-grid-collapse uk-flex-middle" uk-grid>
+                <div class="uk-background-cover uk-width-3-4 uk-flex uk-flex-middle" uk-height-viewport style="background: lightgrey;">
+                    <img src="${dataUrl}" id="croppr"/>
+                </div>
+                <div class="uk-padding-large uk-width-1-4 uk-flex uk-flex-column">
+                    <button id="btn_crop" class="uk-margin uk-button uk-button-primary">Use current area</button>
+                    <button id="btn_crop_cancel" class="uk-margin uk-button uk-button-default">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    var div = document.createElement('div');
+    div.id = "crop_wrapper";
+    div.style.zIndex = "9999";
+    div.innerHTML = modal_html_str;
+    document.body.appendChild(div);
+
+    var btn_crop = document.getElementById("btn_crop");
+    var btn_crop_cancel = document.getElementById("btn_crop_cancel");
+
+    var croppr = new Croppr('#croppr', ()=>{});
+
+    btn_crop.addEventListener("click", function () {
+
+        const cropRect = croppr.getValue();
+        var canvas = null;
+        if (document.getElementsByTagName("canvas").length > 0) { 
+            canvas = document.getElementsByTagName("canvas")[0];
+        } else {
+            canvas = document.createElement("canvas");
+        }  
+        const context = canvas.getContext("2d");
+        canvas.width = cropRect.width;
+        canvas.height = cropRect.height;
+        context.drawImage(
+            croppr.imageEl,
+            cropRect.x,
+            cropRect.y,
+            cropRect.width,
+            cropRect.height,
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+        );
+        var cropped_url = canvas.toDataURL();
+
+        chrome.runtime.sendMessage({msg: "cropped", receiver: sender, dataUrl: cropped_url});
+        UIkit.notification({message: '<div class=".uk-text-center" style="width:100%;">Cropped image added</div>', status: 'success', pos: 'top-center'})
+
+    });
+
+    btn_crop_cancel.addEventListener("click", function () {
+        UIkit.modal("#crop-modal").hide();
+        document.body.removeChild(document.getElementById("crop_wrapper"));
+        document.body.removeChild(document.getElementById("crop-modal"));
+        delete croppr;
+    });
+
+
+
+    
+
+    UIkit.modal("#crop-modal").show();
+
+}
