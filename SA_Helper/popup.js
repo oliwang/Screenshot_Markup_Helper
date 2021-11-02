@@ -186,7 +186,7 @@ function generateTimestampFilename() {
     return filename;
 }
 
-function takeScreenshot(windowId) {
+async function takeScreenshot(windowId) {
     // alert("takeScreenshot")
     chrome.tabs.captureVisibleTab(windowId, { format: "png" }, (dataUrl) => {
         // console.log(dataUrl);
