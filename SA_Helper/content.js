@@ -308,7 +308,7 @@ function cropImage(sender, dataUrl) {
                 </div>
                 <div class="uk-padding-large uk-width-1-4 uk-flex uk-flex-column">
                     <button id="btn_crop" class="uk-margin uk-button uk-button-primary">Use current area</button>
-                    <button id="btn_crop_cancel" class="uk-margin uk-button uk-button-default">Cancel</button>
+                    <button id="btn_crop_cancel" class="uk-margin uk-button uk-button-default">Close</button>
                 </div>
             </div>
         </div>

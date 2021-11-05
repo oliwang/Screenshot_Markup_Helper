@@ -51,8 +51,9 @@ function add_item_to_wrapper(item_id, item_content) {
 
     delete_btn.addEventListener("click", function (e) {
         var id = delete_btn.getAttribute("data-id");
+        // console.log("id", id);
 
-        div_steps_wrapper.removeChild(document.getElementById(`#li_${item_id}`));
+        div_steps_wrapper.removeChild(document.getElementById(`li_${id}`));
 
         chrome.storage.local.get(["data_dict", "steps_array"], (result) => {
             var data_dict = result.data_dict;
