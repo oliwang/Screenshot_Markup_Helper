@@ -87,8 +87,10 @@ function clickEventContent(that) {
         that.onClick(e);
     }
     that.clicked = !that.clicked;
-    e.preventDefault();
     e.stopPropagation();
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    
     return false;
 
 }
@@ -361,7 +363,7 @@ function cropImage(sender, dataUrl) {
         // anchor.click();
 
         chrome.runtime.sendMessage({msg: "cropped", receiver: sender, dataUrl: cropped_url});
-        UIkit.notification({message: '<div class=".uk-text-center" style="width:100%;">Cropped image added</div>', status: 'success', pos: 'top-center'})
+        UIkit.notification({message: '<div class=".uk-text-center" style="width:100%;">Cropped image added</div>', status: 'primary', pos: 'top-center'})
 
     });
 
