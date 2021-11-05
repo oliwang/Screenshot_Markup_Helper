@@ -28,23 +28,30 @@ https://garagehackbox.azurewebsites.net/hackathons/2356/projects/109782
 
 # Current Usage
 
+<img width="492" alt="Screen Shot 2021-11-05 at 12 15 05 PM" src="https://user-images.githubusercontent.com/5282363/140457802-b76faaa5-fdc8-45f1-8740-26f1dc0f5793.png">
+
+
 1. Take Screenshot (Alt(or MacCtrl) + Shift + S)
 
 2. Add Heading
 
 3. Add Description Text
 
-2. Start / Pause Markup (Alt(or MacCtrl) + Shift + M)
+4. Start / Pause Markup (Alt(or MacCtrl) + Shift + M)
 
     Hover your mouse to select where you want to add markup. 
     Click to add it.
 
-3. Clear Markup (Alt(or MacCtrl) + Shift + C)
+5. Clear Markup (Alt(or MacCtrl) + Shift + C)
 
-4. Remove all history
+6. Remove all history
 
-5. Download word document
+7. Download word document
 
+
+<img width="524" alt="Screen Shot 2021-11-05 at 12 13 40 PM" src="https://user-images.githubusercontent.com/5282363/140457834-a7f21686-6e99-41f8-b9d1-02a66650985c.png">
+
+<img width="519" alt="Screen Shot 2021-11-05 at 12 13 51 PM" src="https://user-images.githubusercontent.com/5282363/140457839-d531e513-c002-4105-bc01-164d68898020.png">
 
 
 ## Updates
