@@ -30,6 +30,10 @@ https://garagehackbox.azurewebsites.net/hackathons/2356/projects/109782
 
 1. Take Screenshot (Alt(or MacCtrl) + Shift + S)
 
+2. Add Heading
+
+3. Add Description Text
+
 2. Start / Pause Markup (Alt(or MacCtrl) + Shift + M)
 
     Hover your mouse to select where you want to add markup. 
@@ -41,11 +45,16 @@ https://garagehackbox.azurewebsites.net/hackathons/2356/projects/109782
 
 5. Download word document
 
-6. Add title to screenshot
 
-7. Click on the screenshot to remove it and it's title
 
-![20211029015221002_screenshot](https://user-images.githubusercontent.com/5282363/139364778-c4de5355-f0b3-4c68-a1fb-fa8293a793f6.png)
+## Updates
+
+### v1.3.2 20211105
+
+- Change popup.html menu to be full width
+- Change description in word font size
+- Scroll to new card
+- Download image when clicked on image on card
 
 
 ## Reference

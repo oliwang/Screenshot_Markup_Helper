@@ -19,7 +19,7 @@ function add_item_to_wrapper(item_id, item_content) {
             str_content = str_screenshot_template;
             break;
         case "heading":
-            var str_title_template = `<input id="input_${item_id}" data-id="${item_id}" class="uk-input" type="text" placeholder="Please enter a title here" value="${item_content.value}">`;
+            var str_title_template = `<input id="input_${item_id}" data-id="${item_id}" class="uk-input" type="text" placeholder="Please enter heading here" value="${item_content.value}">`;
             str_content = str_title_template;
             break;
         case "desc":
@@ -41,9 +41,11 @@ function add_item_to_wrapper(item_id, item_content) {
     var new_li = document.createElement("li");
     new_li.innerHTML = str_card_template;
     new_li.setAttribute('data-id', item_id);
-    new_li.id = `#li_${item_id}`;
+    new_li.id = `li_${item_id}`;
 
     div_steps_wrapper.appendChild(new_li);
+    document.getElementById(`li_${item_id}`).scrollIntoView();
+
 
     var delete_btn = document.querySelector(`#delete_${item_id}`);
 
@@ -88,6 +90,18 @@ function add_item_to_wrapper(item_id, item_content) {
 
                     chrome.storage.local.set({ "data_dict": data_dict });
                 })
+            });
+
+            document.querySelector(`#img_${item_id}`).addEventListener("click", function (e) {
+                var src = e.target.src;
+                
+                var filename = new Date().toISOString()
+                filename = filename.replace(/[-:.TZ]/g, '');
+
+                var anchor = document.createElement("a");
+                anchor.href = src;
+                anchor.download = filename + "_" + "screenshot.png";
+                anchor.click();
             });
 
             break;

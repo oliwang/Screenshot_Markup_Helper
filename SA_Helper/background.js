@@ -16,47 +16,6 @@ chrome.runtime.onInstalled.addListener(() => {
 function takeScreenshot(windowId, tabId) {
     chrome.tabs.captureVisibleTab(windowId, {format: 'png'}, (dataUrl) => {
         chrome.tabs.sendMessage(tabId, { msg: "crop", data: { sender: "background", dataUrl: dataUrl } });
-        // console.log("taken");
-        // var filename = new Date().toISOString()
-        // filename = filename.replace(/[-:.TZ]/g, '');
-        // chrome.downloads.download({
-        //     url: dataUrl,
-        //     filename: filename + "_" + "screenshot.png"
-        // });
-
-        // chrome.storage.local.get(["data_dict", "steps_array"], ( result ) => {
-        //     var data_dict = result.data_dict;
-        //     var steps_array = result.steps_array;
-        //     var is_dup = false;
-
-        //     for (const [key, value] of Object.entries(data_dict)) {
-        //         console.log(key, value);
-        //         if (value.type == "screenshot" && value.src == dataUrl) {
-        //             is_dup = true;
-        //             break;
-        //         }
-        //     }
-
-        //     if (!is_dup) {
-        //         var obj = {};
-        //         obj["type"] = "screenshot";
-        //         obj["src"] = dataUrl;
-        //         obj["w"] = 0;
-        //         obj["h"] = 0;
-
-        //         var obj_id = "screenshot_" + filename;
-
-        //         data_dict[obj_id] = obj;
-        //         steps_array.push(obj_id);
-                
-        //         chrome.storage.local.set({ "data_dict": data_dict, "steps_array": steps_array });
-
-        //         add_item_to_wrapper(obj_id, obj);
-
-        //     }
-    
- 
-        // });
 
     });
 }

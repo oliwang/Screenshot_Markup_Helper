@@ -238,7 +238,13 @@ function downloadDocx() {
 
                     var curr_paragraph = new docx.Paragraph({
                         children: [
-                            new docx.TextRun(text + "\n"),
+                            new docx.TextRun(
+                                {
+                                    text: text + "\n",
+                                    size: 24
+
+                                }
+                            ),
                         ],
                         spacing: {
                             after: 100
@@ -296,7 +302,6 @@ function cropImage(sender, dataUrl) {
     var modal_html_str = 
     `<div id="crop-modal" class="uk-modal-full" uk-modal>
         <div class="uk-modal-dialog">
-            <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
             <div class="uk-grid-collapse uk-flex-middle" uk-grid>
                 <div class="uk-background-cover uk-width-3-4 uk-flex uk-flex-middle" uk-height-viewport style="background: lightgrey;">
                     <img src="${dataUrl}" id="croppr"/>
@@ -344,6 +349,14 @@ function cropImage(sender, dataUrl) {
             canvas.height,
         );
         var cropped_url = canvas.toDataURL();
+
+        // var filename = new Date().toISOString()
+        // filename = filename.replace(/[-:.TZ]/g, '');
+
+        // var anchor = document.createElement("a");
+        // anchor.href = cropped_url;
+        // anchor.download = filename + "_" + "screenshot.png";
+        // anchor.click();
 
         chrome.runtime.sendMessage({msg: "cropped", receiver: sender, dataUrl: cropped_url});
         UIkit.notification({message: '<div class=".uk-text-center" style="width:100%;">Cropped image added</div>', status: 'success', pos: 'top-center'})
