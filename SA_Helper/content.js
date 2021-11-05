@@ -236,16 +236,17 @@ function downloadDocx() {
                 case "desc":
                     var text = obj.value;
 
-                    var curr_paragraph = new docx.Paragraph({
-                        children: [
-                            new docx.TextRun(
-                                {
-                                    text: text + "\n",
-                                    size: 24
+                    var text_list = [];
+                    text.split("\n").forEach(function (line) {
+                        text_list.push(new docx.TextRun({
+                            text: line + "\n",
+                            break: 1,
+                            size: 24
+                        }));
+                    })
 
-                                }
-                            ),
-                        ],
+                    var curr_paragraph = new docx.Paragraph({
+                        children: text_list,
                         spacing: {
                             after: 100
                         },
@@ -260,6 +261,7 @@ function downloadDocx() {
 
         });
 
+
         const doc = new docx.Document({
             numbering: {
                 config: [
@@ -269,7 +271,7 @@ function downloadDocx() {
                             {
                                 level: 0,
                                 format: docx.LevelFormat.Decimal,
-                                text: "%1.",
+                                text: "Step %1.",
                                 alignment: docx.AlignmentType.START,
                                 
                             },
