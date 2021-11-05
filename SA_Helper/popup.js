@@ -19,7 +19,7 @@ function add_item_to_wrapper(item_id, item_content) {
             str_content = str_screenshot_template;
             break;
         case "heading":
-            var str_title_template = `<input id="input_${item_id}" data-id="${item_id}" class="uk-input" type="text" placeholder="Please enter heading here" value="${item_content.value}">`;
+            var str_title_template = `<input id="input_${item_id}" data-id="${item_id}" class="uk-input" type="text" placeholder="Please enter heading here" value="${item_content.value}" style="font-weight:bold;">`;
             str_content = str_title_template;
             break;
         case "desc":
