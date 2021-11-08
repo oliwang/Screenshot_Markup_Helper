@@ -9,18 +9,44 @@ var is_init = true;
 // https://stackoverflow.com/questions/31404776/add-and-remove-eventlistener-with-arguments-and-access-element-and-event-java
 
 ElementInspector.prototype.appendOverlay = function () {
-    var overlay = this.doc.createElement('div');
-    overlay.setAttribute('id', 'element-inspector-overlay');
-    overlay.setAttribute('style', 'pointer-events: none; position: absolute; z-index: 1000000; background-color: ' + this.overlayBackgroundColor + ';');
-    this.doc.body.appendChild(overlay);
+    // var overlay = this.doc.createElement('div');
+    var overlay = document.createElement('div');
+    overlay.style.backgroundColor = this.overlayBackgroundColor;
+    overlay.style.position = 'absolute';
+    overlay.style.zIndex = '999999';
+    overlay.style.pointerEvents = 'none';
+    overlay.id = "element-inspector-overlay";
+    // overlay.setAttribute('id', 'element-inspector-overlay');
+    // overlay.setAttribute('style', 'pointer-events: none; position: absolute; z-index: 999999; background-color: ' + this.overlayBackgroundColor + ';');
+    
+    
+    
+    // this.doc.body.appendChild(overlay);
+    document.body.appendChild(overlay);
 
     this.overlay = this.doc.querySelector('#element-inspector-overlay');
+
+    // document.querySelector('#element-inspector-overlay').addEventListener('click', (e)=>{
+    //     console.log("overlay clicked", e);
+    // })
+
+    
 };
 
 ElementInspector.prototype._init = function () {
     var that = this;
     that.appendOverlay();
     that.hideOverlay();
+
+    // var div_ele = document.createElement("div")
+    // div_ele.style.width = "69px"
+    // div_ele.style.height = "30px"
+    // div_ele.style.backgroundColor = "rgba(255,0,0,0.3)"
+    // div_ele.style.top = "126px"
+    // div_ele.style.left = "306.156px"
+    // div_ele.style.position = "absolute";
+    // div_ele.style.display = 'block';
+    // document.body.appendChild(div_ele)
 
 
 }
@@ -83,13 +109,16 @@ function mousemoveEventContent(that) {
 
 function clickEventContent(that) {
     var e = event;
+    // console.log("clickEventContent", e);
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    e.preventDefault();
+
     if (that._isFunction(that.onClick)) {
         that.onClick(e);
     }
     that.clicked = !that.clicked;
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    e.preventDefault();
+    
     
     return false;
 
@@ -109,6 +138,7 @@ var ei = new ElementInspector({
         markup.classList.add("SA_markup");
         markup.style.position = 'absolute';
         markup.style.zIndex = '999';
+        markup.removeAttribute('id');
 
         document.body.appendChild(markup);
     }
