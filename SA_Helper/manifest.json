@@ -78,6 +78,13 @@
         "mac": "MacCtrl+Shift+M"
       },
       "description": "Start inspecting and adding markup."
+    },
+    "add_markup": {
+      "suggested_key": {
+        "default": "Alt+Shift+N",
+        "mac": "MacCtrl+Shift+N"
+      },
+      "description": "Add current markup."
     }
   }
 }

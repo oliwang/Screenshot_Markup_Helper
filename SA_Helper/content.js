@@ -10,7 +10,7 @@ var is_init = true;
 
 ElementInspector.prototype.appendOverlay = function () {
     // var overlay = this.doc.createElement('div');
-    var overlay = document.createElement('div');
+    var overlay = this.doc.createElement('div');
     overlay.style.backgroundColor = this.overlayBackgroundColor;
     overlay.style.position = 'absolute';
     overlay.style.zIndex = '999999';
@@ -21,15 +21,9 @@ ElementInspector.prototype.appendOverlay = function () {
     
     
     
-    // this.doc.body.appendChild(overlay);
-    document.body.appendChild(overlay);
+    this.doc.body.appendChild(overlay);
 
     this.overlay = this.doc.querySelector('#element-inspector-overlay');
-
-    // document.querySelector('#element-inspector-overlay').addEventListener('click', (e)=>{
-    //     console.log("overlay clicked", e);
-    // })
-
     
 };
 
@@ -38,16 +32,7 @@ ElementInspector.prototype._init = function () {
     that.appendOverlay();
     that.hideOverlay();
 
-    // var div_ele = document.createElement("div")
-    // div_ele.style.width = "69px"
-    // div_ele.style.height = "30px"
-    // div_ele.style.backgroundColor = "rgba(255,0,0,0.3)"
-    // div_ele.style.top = "126px"
-    // div_ele.style.left = "306.156px"
-    // div_ele.style.position = "absolute";
-    // div_ele.style.display = 'block';
-    // document.body.appendChild(div_ele)
-
+    this.markup = false;
 
 }
 
@@ -59,6 +44,8 @@ ElementInspector.prototype._startInspecting = function () {
 
     that.el.addEventListener('mousemove', mousemoveEvent = mousemoveEventContent.bind(that.el, that));
     that.el.addEventListener('click', clickEvent = clickEventContent.bind(that.el, that));
+
+    this.markup = true;
 }
 
 ElementInspector.prototype._stopInspecting = function () {
@@ -68,6 +55,8 @@ ElementInspector.prototype._stopInspecting = function () {
 
     that.el.removeEventListener('mousemove', mousemoveEvent);
     that.el.removeEventListener('click', clickEvent);
+
+    this.markup = false;
 }
 
 
@@ -140,7 +129,7 @@ var ei = new ElementInspector({
         markup.style.zIndex = '999';
         markup.removeAttribute('id');
 
-        document.body.appendChild(markup);
+        this.doc.body.appendChild(markup);
     }
 });
 
@@ -175,12 +164,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         } else if (request.msg === 'crop') {
             console.log("content.js crop image", request.data.dataUrl);
             cropImage(request.data.sender, request.data.dataUrl);
+        } else if (request.msg === 'add_markup') {
+            if (ei.markup) {
+                addMarkup();
+            }
+            
         }
 
     }
 
     return true;
 });
+
+function addMarkup() {
+    var markup = ei.overlay.cloneNode(true);
+    markup.style.backgroundColor = 'rgba(255,255,0,0.3)';
+    markup.classList.add("SA_markup");
+    markup.style.position = 'absolute';
+    markup.style.zIndex = '999';
+    markup.removeAttribute('id');
+
+    document.body.appendChild(markup);
+}
 
 function startMarkup() {
     // console.log("startMarkup");

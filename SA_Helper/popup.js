@@ -248,7 +248,7 @@ btn_ClearAnnotation.addEventListener("click", async () => {
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.msg === "control_status") {
-            setControlBtnStatus(response.data.cs);
+            setControlBtnStatus(request.data.cs);
         }
     }
 );

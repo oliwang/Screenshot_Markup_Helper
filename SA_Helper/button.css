@@ -22,6 +22,10 @@ button {
   border-radius: 2px;
 }
 
+code {
+  color: #1e87f0 !important;
+}
+
 .btn_wrapper {
   display: flex;
   flex-wrap: nowrap;

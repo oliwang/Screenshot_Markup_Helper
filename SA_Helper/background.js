@@ -76,6 +76,8 @@ chrome.commands.onCommand.addListener((command) => {
             takeScreenshot(tabs[0].windowId, tabs[0].id);
         } else if (command === 'markup') {
             chrome.tabs.sendMessage(tabs[0].id, {msg:command, data: {sender : "background"}});
+        } else if (command === 'add_markup') {
+            chrome.tabs.sendMessage(tabs[0].id, {msg:command, data: {sender : "background"}});
         } else {
             chrome.tabs.sendMessage(tabs[0].id, { msg: command });
 
