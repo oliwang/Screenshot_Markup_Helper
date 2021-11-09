@@ -26,6 +26,10 @@ code {
   color: #1e87f0 !important;
 }
 
+.menu {
+  background-color: white;
+}
+
 .btn_wrapper {
   display: flex;
   flex-wrap: nowrap;

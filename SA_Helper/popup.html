@@ -11,20 +11,23 @@
 </head>
 
 <body>
-  <div class="btn_wrapper" uk-sticky>
-    <button id="btn_Screenshot" title="Take Screenshot (Alt+Shift+S)"><i class="fas fa-camera"></i></button>
-    <button id="btn_AddTitle" title="Add Heading"><i class="fas fa-heading"></i></button>
-    <button id="btn_AddText" title="Add Text"><i class="fas fa-edit"></i></button>
-
-    <hr class="uk-divider-vertical">
-    <button id="btn_ControlAnnotation" title="Start/Stop Annotation (Alt+Shift+M)"><i class="fas"></i></button>
-    <button id="btn_ClearAnnotation" title="Clear Annotation (Alt+Shift+C)"><i class="fas fa-eraser"></i></button>
-    <button id="btn_RemoveAllImages" title="Remove All Images"><i class="fas fa-broom"></i></button>
-    <button id="btn_DownloadDocx" title="Download Docx"><i class="fas fa-download"></i></button>
+  <div class="menu" uk-sticky>
+    <div class="btn_wrapper" >
+      <button id="btn_Screenshot" title="Take Screenshot (Alt+Shift+S)"><i class="fas fa-camera"></i></button>
+      <button id="btn_AddTitle" title="Add Heading"><i class="fas fa-heading"></i></button>
+      <button id="btn_AddText" title="Add Text"><i class="fas fa-edit"></i></button>
+  
+      <hr class="uk-divider-vertical">
+      <button id="btn_ControlAnnotation" title="Start/Stop Annotation (Alt+Shift+M)"><i class="fas"></i></button>
+      <button id="btn_ClearAnnotation" title="Clear Annotation (Alt+Shift+C)"><i class="fas fa-eraser"></i></button>
+      <button id="btn_RemoveAllImages" title="Remove All Images"><i class="fas fa-broom"></i></button>
+      <button id="btn_DownloadDocx" title="Download Docx"><i class="fas fa-download"></i></button>
+    </div>
+    <div class="info uk-text-center" id="markup_info">
+      <p>Use <code>Alt+Shift+N</code> or <code>MacCtrl+Shift+N</code> or mouse clicks to add markup.</p>
+    </div>
   </div>
-  <div class="info uk-text-center" id="markup_info" uk-sticky>
-    <p>Use <code>Alt+Shift+N</code> or <code>MacCtrl+Shift+N</code> or mouse clicks to add markup.</p>
-  </div>
+  
   <div class="content">
 
     <ul uk-sortable id="steps_wrapper" class="uk-nav uk-nav-default">
