@@ -159,6 +159,13 @@ function add_item_to_wrapper(item_id, item_content) {
 
 (function () {
     // alert("init");
+
+    window.setTimeout(()=>{
+        console.log("scroll down")
+        document.querySelector("#footer").scrollIntoView({behavior: "smooth"});
+
+    }, 300);
+
     chrome.storage.sync.get("control_status", ({ control_status }) => {
         setControlBtnStatus(control_status);
     });
@@ -170,6 +177,8 @@ function add_item_to_wrapper(item_id, item_content) {
         steps_array.forEach(obj_id => {
             add_item_to_wrapper(obj_id, data_dict[obj_id]);
         });
+
+        
     });
 
     UIkit.util.on('#steps_wrapper', 'moved', function (item) {
@@ -184,6 +193,10 @@ function add_item_to_wrapper(item_id, item_content) {
 
         chrome.storage.local.set({ "steps_array": steps_array });
     });
+
+    // document.querySelector("#footer").scrollIntoView({behavior: "smooth"});
+    
+    // window.scrollTo(0,document.querySelector("#footer").scrollHeight);
 
 })();
 
