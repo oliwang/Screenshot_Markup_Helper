@@ -16,7 +16,7 @@ https://garagehackbox.azurewebsites.net/hackathons/2356/projects/109782
 
     1. Open extension setting
 
-    Google Chrome: go to chrome://extensions
+    Google Chrome: go to `chrome://extensions`
 
     Edge: choose Extensions from menu
 
@@ -31,18 +31,18 @@ https://garagehackbox.azurewebsites.net/hackathons/2356/projects/109782
 <img width="492" alt="Screen Shot 2021-11-05 at 12 15 05 PM" src="https://user-images.githubusercontent.com/5282363/140457802-b76faaa5-fdc8-45f1-8740-26f1dc0f5793.png">
 
 
-1. Take Screenshot (Alt(or MacCtrl) + Shift + S)
+1. Take Screenshot `Alt(or MacCtrl) + Shift + S`
 
 2. Add Heading
 
 3. Add Description Text
 
-4. Start / Pause Markup (Alt(or MacCtrl) + Shift + M)
+4. Start / Pause Markup `Alt(or MacCtrl) + Shift + M`
 
     Hover your mouse to select where you want to add markup. 
-    Click to add it.
+    Click or `Alt(or MacCtrl) + Shift + N` to add it.
 
-5. Clear Markup (Alt(or MacCtrl) + Shift + C)
+5. Clear Markup `Alt(or MacCtrl) + Shift + C`
 
 6. Remove all history
 
@@ -55,6 +55,13 @@ https://garagehackbox.azurewebsites.net/hackathons/2356/projects/109782
 
 
 ## Updates
+
+### v1.3.3 20211110
+- click dispatch bug workaround
+- desc multiline
+- bold font for headlines
+- solve delete btn bug
+- solve popup.html control status not change bug when using keyboard short cut
 
 ### v1.3.2 20211105
 

@@ -117,7 +117,7 @@ function clickEventContent(that) {
 var ei = new ElementInspector({
     targetSelector: 'body',
     onMousemove: function (e) {
-        console.log("startMarkup onMousemove");
+        // console.log("startMarkup onMousemove");
         captured = ei.overlay;
         // console.log(e.target.outerHTML);
     },
@@ -162,7 +162,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         } else if (request.msg === 'download_docx') {
             downloadDocx();
         } else if (request.msg === 'crop') {
-            console.log("content.js crop image", request.data.dataUrl);
+            // console.log("content.js crop image", request.data.dataUrl);
             cropImage(request.data.sender, request.data.dataUrl);
         } else if (request.msg === 'add_markup') {
             if (ei.markup) {
@@ -260,7 +260,6 @@ function downloadDocx() {
                 case "heading":
 
                     var text = decodeQuote(obj.value);
-                    console.log("quote", text)
                     // var numbering = obj.numbering;
 
                     var curr_paragraph = new docx.Paragraph({
