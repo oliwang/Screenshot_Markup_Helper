@@ -205,6 +205,16 @@ function clearMarkup() {
     }
 }
 
+
+function decodeQuote(str) {
+    return str.replace(/&quot;/g, '"').replace(/&apos;/g, "'");
+}
+
+function encodeQuote(str) {
+    return str.replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+
 function downloadDocx() {
     // alert("downloadDocx");
 
@@ -249,7 +259,8 @@ function downloadDocx() {
                     break;
                 case "heading":
 
-                    var text = obj.value;
+                    var text = decodeQuote(obj.value);
+                    console.log("quote", text)
                     // var numbering = obj.numbering;
 
                     var curr_paragraph = new docx.Paragraph({
@@ -271,7 +282,7 @@ function downloadDocx() {
 
                     break;
                 case "desc":
-                    var text = obj.value;
+                    var text = decodeQuote(obj.value);
 
                     var text_list = [];
                     text.split("\n").forEach(function (line) {

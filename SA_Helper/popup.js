@@ -8,6 +8,13 @@ let btn_DownloadDocx = document.getElementById("btn_DownloadDocx");
 let div_steps_wrapper = document.getElementById("steps_wrapper");
 
 
+function decodeQuote(str) {
+    return str.replace(/&quot;/g, '"').replace(/&apos;/g, "'");
+}
+
+function encodeQuote(str) {
+    return str.replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
 
 
 function add_item_to_wrapper(item_id, item_content) {
@@ -95,7 +102,7 @@ function add_item_to_wrapper(item_id, item_content) {
 
             document.querySelector(`#img_${item_id}`).addEventListener("click", function (e) {
                 var src = e.target.src;
-                
+
                 var filename = new Date().toISOString()
                 filename = filename.replace(/[-:.TZ]/g, '');
 
@@ -109,7 +116,7 @@ function add_item_to_wrapper(item_id, item_content) {
         case "heading":
 
             document.querySelector(`#input_${item_id}`).addEventListener("input", function (e) {
-                var text = e.target.value;
+                var text = encodeQuote(e.target.value);
                 var id = e.target.dataset.id;
 
                 chrome.storage.local.get('data_dict', function (data) {
@@ -160,9 +167,9 @@ function add_item_to_wrapper(item_id, item_content) {
 (function () {
     // alert("init");
 
-    window.setTimeout(()=>{
+    window.setTimeout(() => {
         console.log("scroll down")
-        document.querySelector("#footer").scrollIntoView({behavior: "smooth"});
+        document.querySelector("#footer").scrollIntoView({ behavior: "smooth" });
 
     }, 300);
 
@@ -178,7 +185,7 @@ function add_item_to_wrapper(item_id, item_content) {
             add_item_to_wrapper(obj_id, data_dict[obj_id]);
         });
 
-        
+
     });
 
     UIkit.util.on('#steps_wrapper', 'moved', function (item) {
@@ -193,10 +200,6 @@ function add_item_to_wrapper(item_id, item_content) {
 
         chrome.storage.local.set({ "steps_array": steps_array });
     });
-
-    // document.querySelector("#footer").scrollIntoView({behavior: "smooth"});
-    
-    // window.scrollTo(0,document.querySelector("#footer").scrollHeight);
 
 })();
 
@@ -218,7 +221,7 @@ function takeScreenshot(windowId, tabId) {
     // alert("takeScreenshot")
     chrome.tabs.captureVisibleTab(windowId, { format: "png" }, (dataUrl) => {
         // console.log(dataUrl);
-        
+
         // var anchor = document.createElement("a");
         // anchor.href = dataUrl;
         // anchor.download = filename + "_" + "screenshot.png";
