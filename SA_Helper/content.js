@@ -248,7 +248,10 @@ function downloadDocx() {
                                 },
                                 
                             }),
-                            new docx.TextRun("\n"),
+                            new docx.TextRun({
+                                text: "",
+                                break: 1
+                            }),
                         ],
                         spacing: {
                             after: 100
@@ -286,7 +289,7 @@ function downloadDocx() {
                     var text_list = [];
                     text.split("\n").forEach(function (line) {
                         text_list.push(new docx.TextRun({
-                            text: line + "\n",
+                            text: line,
                             break: 1,
                             size: 24
                         }));
