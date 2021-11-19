@@ -1,5 +1,5 @@
 html{
-  width: 500px;
+  width: 600px;
   
 }
 
@@ -70,4 +70,9 @@ code {
 #steps_wrapper .uk-card img {
   max-width: 80%;
   width: 80%;
+}
+
+#file-progress-container {
+	display: none;
+	margin: 15px 0 0 0;
 }

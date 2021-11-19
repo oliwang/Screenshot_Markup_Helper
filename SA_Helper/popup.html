@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="uikit.min.css" />
   <script src="uikit.min.js"></script>
   <script src="uikit-icons.min.js"></script>
+  <script src="FileSaver.js"></script>
   <link rel="stylesheet" href="button.css">
 </head>
 
@@ -22,6 +23,12 @@
       <button id="btn_ClearAnnotation" title="Clear Annotation (Alt+Shift+C)"><i class="fas fa-eraser"></i></button>
       <button id="btn_RemoveAllImages" title="Remove All Images"><i class="fas fa-broom"></i></button>
       <button id="btn_DownloadDocx" title="Download Docx"><i class="fas fa-download"></i></button>
+
+      <hr class="uk-divider-vertical">
+      <input type="file" id="file-input" style="display:none"/>
+      <button id="btn_ImportJSON" title="Import JSON file"><i class="fas fa-file-import"></i></button>
+      <button id="btn_ExportJSON" title="Export as JSON file"><i class="fas fa-file-export"></i></button>
+      
     </div>
     <div class="info uk-text-center" id="markup_info">
       <p>Use <code>Alt(MacCtrl)+Shift+N</code> or mouse clicks to add markup.</p>

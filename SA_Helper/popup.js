@@ -5,6 +5,8 @@ let btn_ControlAnnotation = document.getElementById("btn_ControlAnnotation");
 let btn_ControlAnnotation_i = document.querySelector("#btn_ControlAnnotation i");
 let btn_ClearAnnotation = document.getElementById("btn_ClearAnnotation");
 let btn_DownloadDocx = document.getElementById("btn_DownloadDocx");
+let btn_ImportJSON = document.getElementById("btn_ImportJSON");
+let btn_ExportJSON = document.getElementById("btn_ExportJSON");
 let div_steps_wrapper = document.getElementById("steps_wrapper");
 
 
@@ -271,6 +273,8 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.msg === "control_status") {
             setControlBtnStatus(request.data.cs);
+        } else {
+            console.log(request.msg);
         }
     }
 );
@@ -307,7 +311,7 @@ btn_AddHeading.addEventListener("click", async () => {
         add_item_to_wrapper(obj_id, obj);
     });
 
-})
+});
 
 btn_AddDesc.addEventListener("click", async () => {
     var obj_id = "desc_" + generateTimestampFilename();
@@ -328,8 +332,104 @@ btn_AddDesc.addEventListener("click", async () => {
         add_item_to_wrapper(obj_id, obj);
     });
 
-})
+});
 
+btn_ImportJSON.addEventListener("click", ()=>{
+    document.querySelector("#file-input").click();
+
+});
+
+// https://usefulangle.com/post/193/javascript-read-local-file
+document.querySelector("#file-input").addEventListener('change', function() {
+	// files that user has chosen
+	var all_files = this.files;
+	if(all_files.length == 0) {
+		alert('Error : No file selected');
+		return;
+	}
+
+	// first file selected by user
+	var file = all_files[0];
+
+	// files types allowed
+	var allowed_types = [ 'application/json', 'text/json', 'text/plain' ];
+	if(allowed_types.indexOf(file.type) == -1) {
+		alert('Error : Incorrect file type');
+		return;
+	}
+
+	// Max 2 MB allowed
+	// var max_size_allowed = 2*1024*1024
+	// if(file.size > max_size_allowed) {
+	// 	alert('Error : Exceeded size 2MB');
+	// 	return;
+	// }
+
+	// file validation is successfull
+	// we will now read the file
+
+	var reader = new FileReader();
+
+	// file reading started
+	// reader.addEventListener('loadstart', function() {
+	//     document.querySelector("#file-input-label").style.display = 'none'; 
+	// });
+
+	// file reading finished successfully
+	reader.addEventListener('load', function(e) {
+	    var text = e.target.result;
+        console.log(text)
+
+        var data = JSON.parse(text);
+
+        var data_dict = data.data_dict;
+        var steps_array = data.steps_array;
+
+        chrome.storage.local.set({ "data_dict": data_dict, "steps_array": steps_array });
+
+        window.location.reload();
+
+	    // contents of the file
+	    // document.querySelector("#contents").innerHTML = text;
+	    // document.querySelector("#contents").style.display = 'block';
+
+	    // document.querySelector("#file-input-label").style.display = 'block'; 
+	});
+
+	// file reading failed
+	reader.addEventListener('error', function() {
+	    alert('Error : Failed to read file');
+	});
+
+	// file read progress 
+	// reader.addEventListener('progress', function(e) {
+	//     if(e.lengthComputable == true) {
+	//     	document.querySelector("#file-progress-percent").innerHTML = Math.floor((e.loaded/e.total)*100);
+	//     	document.querySelector("#file-progress-percent").style.display = 'block';
+	//     }
+	// });
+
+	// read as text file
+	reader.readAsText(file);
+});
+
+btn_ExportJSON.addEventListener("click", ()=>{
+    chrome.storage.local.get(["data_dict", "steps_array"], (result) => {
+        var data_dict = result.data_dict;
+        var steps_array = result.steps_array;
+
+        var fileName = generateTimestampFilename() + '.json';
+        
+        // Create a blob of the data
+        var fileToSave = new Blob([JSON.stringify(result)], {
+            type: 'application/json'
+        });
+        
+        // Save the file
+        saveAs(fileToSave, fileName);
+    })
+
+});
 
 
 
