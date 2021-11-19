@@ -35,6 +35,7 @@ function add_item_to_wrapper(item_id, item_content) {
             break;
         default:
             console.log("default");
+            break;
     }
 
     var str_card_template = `
@@ -133,6 +134,8 @@ function add_item_to_wrapper(item_id, item_content) {
                 })
             });
 
+            document.querySelector(`#input_${item_id}`).focus();
+
             break;
         case "desc":
             document.querySelector(`#textarea_${item_id}`).addEventListener("input", function (e) {
@@ -153,9 +156,12 @@ function add_item_to_wrapper(item_id, item_content) {
                 })
             });
 
+            document.querySelector(`#textarea_${item_id}`).focus();
+
             break;
         default:
             console.log("default");
+            break;
 
     }
 
